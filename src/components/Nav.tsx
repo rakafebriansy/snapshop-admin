@@ -1,10 +1,8 @@
 import Link from 'next/link';
 import React from 'react'
 
-interface NavProps {
 
-}
-const Nav: React.FC<NavProps> = ({ }) => {
+const Nav: React.FC = ({ }) => {
 
     const inactiveLink = 'flex gap-1 p-2 hover:bg-green-700 rounded-lg';
     const activeLink = `${inactiveLink} bg-white text-green-900 hover:bg-white`;
