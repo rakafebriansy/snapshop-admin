@@ -9,15 +9,17 @@ export default async function handler(
     const { method } = req;
     await mongooseConnect();
 
-    if (method == 'POST') {
+    if (method == 'GET') {
+        const products: (IProduct & Document)[] = await Product.find();
+        res.status(200).json(products);
+    } else if (method == 'POST') {
         const { name, description, price } = req.body;
         const productDoc: IProduct & Document = await Product.create({
             name,
             description,
             price
         });
-        res.status(200).json(productDoc);
-
+        res.status(201).json(productDoc);
     }
     res.status(200).json({
         id: '',
