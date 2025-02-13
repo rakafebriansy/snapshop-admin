@@ -3,11 +3,14 @@ import Layout from '../../../components/Layout';
 import { AxiosError } from 'axios';
 import { StoreProductRequest } from '../../../types/Product';
 import ProductService from '../../../services/product';
+import { redirect } from 'next/navigation';
+import { useRouter } from 'next/router';
 
 const NewProductsPage: React.FC = ({ }) => {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState('');
+    const { push } = useRouter();
 
     const store = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -17,8 +20,8 @@ const NewProductsPage: React.FC = ({ }) => {
                 description,
                 price
             };
-            const response = await ProductService.store(product);
-            console.log(response);
+            await ProductService.store(product);
+            push('/products');
         } catch (error) {
             if (error instanceof AxiosError) {
                 alert(error.message);
