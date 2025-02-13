@@ -4,7 +4,7 @@ import { signIn } from "next-auth/react"
 const LoginPage: React.FC = ({ }) => {
     return (
         <div className="text-center w-full">
-            <button onClick={() => signIn('google')} className='button-filled'>Login with Google</button>
+            <button onClick={async () => await signIn('google')} className='button-filled'>Login with Google</button>
         </div>
     );
 }
