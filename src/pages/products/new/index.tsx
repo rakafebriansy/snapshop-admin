@@ -5,9 +5,11 @@ import { StoreProductRequest } from '../../../types/Product';
 import ProductService from '../../../services/product';
 import { redirect } from 'next/navigation';
 import { useRouter } from 'next/router';
+import Helper from '../../../utils/helper';
 
 const NewProductsPage: React.FC = ({ }) => {
     const [name, setName] = useState('');
+    const [slug, setSlug] = useState('');
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState('');
     const { push } = useRouter();
@@ -17,15 +19,14 @@ const NewProductsPage: React.FC = ({ }) => {
         try {
             const product: StoreProductRequest = {
                 name,
+                slug,
                 description,
                 price
             };
             await ProductService.store(product);
             push('/products');
         } catch (error) {
-            if (error instanceof AxiosError) {
-                alert(error.message);
-            }
+            alert('Error');
         }
     };
 
@@ -40,7 +41,22 @@ const NewProductsPage: React.FC = ({ }) => {
                         name='name'
                         placeholder='Enter product name...'
                         value={name}
-                        onChange={(e) => setName(e.target.value)}
+                        onChange={
+                            (e) => {
+                                const slug = Helper.createSlug(e.target.value);
+                                setName(e.target.value);
+                                setSlug(slug);
+                            }}
+                    />
+                </label>
+                <label htmlFor="slug">
+                    <span>Product slug</span>
+                    <input
+                        readOnly={true}
+                        type='text'
+                        name='slug'
+                        placeholder='-'
+                        value={slug}
                     />
                 </label>
                 <label htmlFor="description">
@@ -54,10 +70,13 @@ const NewProductsPage: React.FC = ({ }) => {
                 <label htmlFor="price">
                     <span>Price (in USD)</span>
                     <input
-                        type="number"
+                        type="text"
                         placeholder='Enter product price...'
-                        value={price}
-                        onChange={(e) => setPrice(e.target.value)}
+                        value={Helper.formatToUSD(price)}
+                        onChange={
+                            (e) => {
+                                setPrice(e.target.value.replace(/,/g, ""));
+                            }}
                     />
                 </label>
                 <button className='button-primary' type='submit'>Save</button>

@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import { StoreProductRequest } from "../types/Product";
 import { IProduct } from "../models/Product";
 
@@ -17,7 +17,9 @@ class ProductService {
             const response: AxiosResponse<(IProduct & Document)[]> = await axios.get(`${isServer ? process.env.NEXT_PUBLIC_API_URL : ''}/api/products`);
             return response.data;
         } catch (error) {
-            console.error(error);
+            if(error instanceof AxiosError) {
+                console.error(error.message);
+            }
             throw error;
         }
     }
