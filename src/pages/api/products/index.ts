@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { IProduct, Product } from "../../models/Product";
-import { mongooseConnect } from "../../lib/mongoose";
+import { ProductDoc, Product } from "../../../models/Product";
+import { mongooseConnect } from "../../../lib/mongoose";
 
 export default async function handler(
     req: NextApiRequest,
@@ -10,11 +10,11 @@ export default async function handler(
     await mongooseConnect();
 
     if (method == 'GET') {
-        const products: (IProduct & Document)[] = await Product.find();
-        res.status(200).json(products);
+            const products: ProductDoc[] = await Product.find();
+            res.status(200).json(products);
     } else if (method == 'POST') {
         const { name, description, price, slug } = req.body;
-        const productDoc: IProduct & Document = await Product.create({
+        const productDoc: ProductDoc = await Product.create({
             name,
             description,
             slug,
