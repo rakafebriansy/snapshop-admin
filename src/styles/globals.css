@@ -37,7 +37,7 @@ body {
 }
 
 input, textarea {
-  @apply border-2 border-gray-500 rounded-md px-2 py-2 w-full mb-2 placeholder:text-gray-300 text-sm;
+  @apply border border-gray-500/40 rounded-md px-2 py-2 w-full mb-2 placeholder:text-gray-300 text-sm;
 }
 
 input:focus, textarea:focus {

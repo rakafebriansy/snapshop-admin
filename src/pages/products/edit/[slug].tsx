@@ -4,17 +4,25 @@ import { useRouter } from 'next/router';
 import ProductService from '../../../services/product';
 import ProductForm from '../../../components/products/ProductForm';
 import { ProductDoc } from '../../../models/Product';
-import { ProductType } from '../../../types/Product';
+import { ProductRequestType, ProductType } from '../../../types/Product';
 
 const EditProductPage: React.FC = ({ }) => {
     const router = useRouter();
     const { slug } = router.query;
     const [product, setProduct] = useState<ProductType | undefined>(undefined);
 
-    const update = async (e: React.FormEvent<HTMLFormElement>, product: ProductType) => {
+    const update = async (e: React.FormEvent<HTMLFormElement>, product: ProductRequestType) => {
         e.preventDefault();
         try {
-            await ProductService.update(product);
+            const formData: FormData = new FormData();
+            formData.append('name', product.name);
+            formData.append('slug', product.slug);
+            formData.append('description', product.description);
+            formData.append('price', String(product.price));
+            if (product.image) {
+                formData.append('image', product.image);
+            }
+            await ProductService.update(slug as string, formData);
             router.push('/products');
         } catch (error) {
             alert('Error');
@@ -39,7 +47,7 @@ const EditProductPage: React.FC = ({ }) => {
     if (!product) {
         return <div>Loading...</div>;
     }
-    
+
     return (
         <Layout>
             <h1>Edit Product</h1>

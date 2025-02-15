@@ -19,7 +19,6 @@ export type ProductsPageProps = {
 
 const ProductsPage: React.FC<ProductsPageProps> = ({ products }: ProductsPageProps) => {
 
-    console.log(products);
     return (
         <Layout>
             <Link href='/products/new' className='button-primary'>Add new product</Link>
