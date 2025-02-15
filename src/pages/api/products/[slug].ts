@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { ProductDoc, Product } from "../../../models/Product";
 import { mongooseConnect } from "../../../lib/mongoose";
+import { DeleteResult } from "mongoose";
 
 export default async function handler(
     req: NextApiRequest,
@@ -45,10 +46,28 @@ export default async function handler(
         }
 
         const product: ProductDoc | null = await Product.findOneAndUpdate(
-            { slug: slug }, 
-            { $set: { name, description, price } }, 
+            { slug: slug },
+            { $set: { name, description, price } },
             { new: true }
         );
+
+        if (!product) {
+            res.status(404).json({
+                message: 'Product is not found'
+            });
+        }
+
+        return res.status(200).json(product);
+    } else if (method == 'DELETE') {
+        const { slug } = req.query;
+
+        if (typeof slug !== 'string') {
+            res.status(400).json({
+                message: 'Invalid slug format'
+            });
+        }
+
+        const product: DeleteResult = await Product.deleteOne({ slug: slug });
 
         if (!product) {
             res.status(404).json({

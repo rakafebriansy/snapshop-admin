@@ -39,11 +39,17 @@ class ProductService {
 
     static async update(data: ProductType, isServer: boolean = false): Promise<ProductDoc> {
         try {
-            console.log(data);
-            if(data._id == null) {
-                throw new Error('_id is required.');
-            }
             const response: AxiosResponse<ProductDoc> = await axios.put(`${isServer ? process.env.NEXT_PUBLIC_API_URL : ''}/api/products/${data.slug}`, data);
+            return response.data;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }
+
+    static async delete(slug: string, isServer: boolean = false): Promise<ProductDoc> {
+        try {
+            const response: AxiosResponse<ProductDoc> = await axios.delete(`${isServer ? process.env.NEXT_PUBLIC_API_URL : ''}/api/products/${slug}`);
             return response.data;
         } catch (error) {
             console.error(error);

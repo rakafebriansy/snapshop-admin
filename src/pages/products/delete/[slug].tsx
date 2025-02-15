@@ -1,25 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import Layout from '../../../components/Layout';
 import { useRouter } from 'next/router';
-import ProductService from '../../../services/product';
-import ProductForm from '../../../components/products/ProductForm';
-import { ProductDoc } from '../../../models/Product';
 import { ProductType } from '../../../types/Product';
+import ProductService from '../../../services/product';
 
-const EditProductPage: React.FC = ({ }) => {
+const DeleteProductPage: React.FC = ({ }) => {
     const router = useRouter();
     const { slug } = router.query;
     const [product, setProduct] = useState<ProductType | undefined>(undefined);
-
-    const update = async (e: React.FormEvent<HTMLFormElement>, product: ProductType) => {
-        e.preventDefault();
-        try {
-            await ProductService.update(product);
-            router.push('/products');
-        } catch (error) {
-            alert('Error');
-        }
-    };
 
     useEffect(() => {
         if (slug) {
@@ -36,15 +24,30 @@ const EditProductPage: React.FC = ({ }) => {
         }
     }, [slug]);
 
+    const remove = async () => {
+        try {
+            if(!product) {
+                throw new Error('Product is required');
+            }
+            await ProductService.delete(product.slug);
+            router.push('/products');
+        } catch (error) {
+            alert('Error');
+        }
+    };
+
     if (!product) {
         return <div>Loading...</div>;
     }
-    
+
     return (
         <Layout>
-            <h1>Edit Product</h1>
-            <ProductForm product={product} callback={update} isEdit={true} />
+            <p>Do you really want to delete product {product.name}?</p>
+            <div className="flex gap-3 mt-3">
+                <button className='button-light' onClick={() => router.back()}>No</button>
+                <button className='button-danger' onClick={remove}>Yes</button>
+            </div>
         </Layout>
     );
 }
-export default EditProductPage;
+export default DeleteProductPage;

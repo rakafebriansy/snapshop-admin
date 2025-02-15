@@ -21,7 +21,19 @@ body {
 }
 
 .button-primary {
-  @apply bg-green-600 text-white py-2 px-6 rounded-md hover:bg-green-700 active:bg-green-800 ;
+  @apply bg-green-600 text-white py-1 px-4 rounded-md hover:bg-green-700 active:bg-green-800 ;
+}
+
+.button-danger {
+  @apply bg-red-600 text-white py-1 px-4 rounded-md hover:bg-red-700 active:bg-red-800 ;
+}
+
+.button-info {
+  @apply bg-blue-600 text-white py-1 px-4 rounded-md hover:bg-blue-700 active:bg-blue-800 ;
+}
+
+.button-light {
+  @apply bg-gray-600 text-white py-1 px-4 rounded-md hover:bg-gray-700 active:bg-gray-800 ;
 }
 
 input, textarea {
