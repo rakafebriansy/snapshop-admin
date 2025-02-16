@@ -17,7 +17,9 @@
     "next": "15.1.6",
     "next-auth": "^4.24.11",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-sortablejs": "^6.1.4",
+    "sortablejs": "^1.15.6"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -25,6 +27,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/sortablejs": "^1.15.8",
     "eslint": "^9",
     "eslint-config-next": "15.1.6",
     "postcss": "^8",
