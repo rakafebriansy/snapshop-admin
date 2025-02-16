@@ -3,6 +3,7 @@ import Layout from '../../../components/Layout';
 import { useRouter } from 'next/router';
 import { ProductType } from '../../../types/Product';
 import ProductService from '../../../services/product';
+import logger from '../../../lib/logger';
 
 const DeleteProductPage: React.FC = ({ }) => {
     const router = useRouter();
@@ -26,12 +27,13 @@ const DeleteProductPage: React.FC = ({ }) => {
 
     const remove = async () => {
         try {
-            if(!product) {
+            if (!product) {
                 throw new Error('Product is required');
             }
             await ProductService.delete(product.slug);
             router.push('/products');
         } catch (error) {
+            logger.error(`/pages/products/delete: ${(error as Error)}`);
             alert('Error');
         }
     };

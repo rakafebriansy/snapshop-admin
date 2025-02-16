@@ -1,13 +1,15 @@
 import React from 'react'
 import { signIn } from "next-auth/react"
 import { useRouter } from 'next/router'
+import logger from '../../lib/logger'
 
 const LoginPage: React.FC = ({ }) => {
 
     const login = async () => {
         try {
             await signIn('google');
-        } catch (Error) {
+        } catch (error) {
+            logger.error(`/pages/login: ${(error as Error).message}`);
             alert('Error');
         }
     }

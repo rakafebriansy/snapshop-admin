@@ -5,6 +5,7 @@ import ProductService from '../../../services/product';
 import ProductForm from '../../../components/products/ProductForm';
 import { ProductDoc } from '../../../models/Product';
 import { ProductRequestType, ProductType } from '../../../types/Product';
+import logger from '../../../lib/logger';
 
 const EditProductPage: React.FC = ({ }) => {
     const router = useRouter();
@@ -14,17 +15,23 @@ const EditProductPage: React.FC = ({ }) => {
     const update = async (e: React.FormEvent<HTMLFormElement>, product: ProductRequestType) => {
         e.preventDefault();
         try {
+            if (!product.images || product.images.length === 0) {
+                throw new Error('At least one image is required.');
+            }
+
             const formData: FormData = new FormData();
             formData.append('name', product.name);
             formData.append('slug', product.slug);
             formData.append('description', product.description);
             formData.append('price', String(product.price));
-            if (product.image) {
-                formData.append('image', product.image);
-            }
+            Array.from(product.images).forEach((file, index) => {
+                formData.append(`images`, file);
+            });
+
             await ProductService.update(slug as string, formData);
             router.push('/products');
         } catch (error) {
+            logger.error(`/pages/products/edit: ${(error as Error)}`);
             alert('Error');
         }
     };

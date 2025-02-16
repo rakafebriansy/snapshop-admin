@@ -1,5 +1,6 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { ProductDoc } from "../models/Product";
+import logger from "../lib/logger";
 
 
 class ProductService {
@@ -9,7 +10,7 @@ class ProductService {
             return response.data;
         } catch (error) {
             if (error instanceof AxiosError) {
-                console.error(error.message);
+                logger.error(`/services/product/index: ${(error as Error)}`);
             }
             throw error;
         }
@@ -21,7 +22,7 @@ class ProductService {
             return response.data;
         } catch (error) {
             if (error instanceof AxiosError) {
-                console.error(error.message);
+                logger.error(`/services/product/show: ${(error as Error)}`);
             }
             throw error;
         }
@@ -36,7 +37,9 @@ class ProductService {
             });
             return response.data;
         } catch (error) {
-            console.error(error);
+            if (error instanceof AxiosError) {
+                logger.error(`/services/product/store: ${(error as Error)}`);
+            }
             throw error;
         }
     }
@@ -50,7 +53,9 @@ class ProductService {
             });
             return response.data;
         } catch (error) {
-            console.error(error);
+            if (error instanceof AxiosError) {
+                logger.error(`/services/product/update: ${(error as Error)}`);
+            }
             throw error;
         }
     }
@@ -60,7 +65,9 @@ class ProductService {
             const response: AxiosResponse<ProductDoc> = await axios.delete(`${isServer ? process.env.NEXT_PUBLIC_API_URL : ''}/api/products/${slug}`);
             return response.data;
         } catch (error) {
-            console.error(error);
+            if (error instanceof AxiosError) {
+                logger.error(`/services/product/delete: ${(error as Error)}`);
+            }
             throw error;
         }
     }

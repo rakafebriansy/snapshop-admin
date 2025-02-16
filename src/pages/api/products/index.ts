@@ -2,13 +2,16 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { ProductDoc, Product } from "../../../models/Product";
 import { mongooseConnect } from "../../../lib/mongoose";
 import { IncomingForm } from "formidable";
-import fs from "fs";
+import ServerHelper from "../../../utils/serverHelper";
+import logger from "../../../lib/logger";
 
 export const config = {
-    api: { bodyParser: false },
+    api: {
+        bodyParser: false,
+    },
 };
 
-const parseForm = (req: NextApiRequest) => {
+export const parseForm = (req: NextApiRequest) => {
     const form = new IncomingForm({ multiples: true });
 
     return new Promise<{ fields: any; files: any }>((resolve, reject) => {
@@ -22,11 +25,11 @@ const parseForm = (req: NextApiRequest) => {
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     await mongooseConnect();
 
-    if (req.method === "GET") {
-        const products: ProductDoc[] = await Product.find();
-        return res.status(200).json(products);
-    } else if (req.method === "POST") {
-        try {
+    try {
+        if (req.method === "GET") {
+            const products: ProductDoc[] = await Product.find();
+            return res.status(200).json(products);
+        } else if (req.method === "POST") {
             const { fields, files } = await parseForm(req);
 
             const name = fields.name?.[0]?.trim() || "";
@@ -40,13 +43,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             let imageUrls: string[] = [];
 
-            console.log(files)
-
             if (files.images) {
                 for (const file of files.images) {
-                    const fileData = fs.readFileSync(file.filepath);
-                    const filePath = `/uploads/${file.originalFilename}`;
-                    fs.writeFileSync(`./public${filePath}`, fileData);
+                    const filePath = await ServerHelper.uploadFile(file, slug);
 
                     imageUrls.push(filePath);
                 }
@@ -60,11 +59,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 imageUrls,
             });
 
-            return res.status(201).json('productDoc');
-        } catch (error) {
-            return res.status(500).json({ message: "Internal Server Error", error: (error as Error).message });
+            return res.status(201).json(productDoc);
         }
+        return res.status(405).json({ message: "Method Not Allowed" });
+    } catch (error) {
+        logger.error(`/pages/api/products: ${(error as Error)}`);
+        return res.status(500).json({ message: "Internal Server Error", error: (error as Error) });
     }
-
-    return res.status(405).json({ message: "Method Not Allowed" });
 }

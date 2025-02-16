@@ -4,6 +4,7 @@ import { ProductRequestType, ProductType } from '../../../types/Product';
 import ProductService from '../../../services/product';
 import { useRouter } from 'next/router';
 import ProductForm from '../../../components/products/ProductForm';
+import logger from '../../../lib/logger';
 
 const NewProductsPage: React.FC = ({ }) => {
 
@@ -35,7 +36,7 @@ const NewProductsPage: React.FC = ({ }) => {
             await ProductService.store(formData);
             push('/products');
         } catch (error) {
-            console.log((error as Error).message);
+            logger.error(`/pages/products/new: ${(error as Error)}`);
             alert('Error');
         }
     };
