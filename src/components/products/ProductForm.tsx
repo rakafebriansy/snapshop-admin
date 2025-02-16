@@ -47,7 +47,7 @@ const ProductForm: React.FC<ProductFormType> = ({
                 reader.onloadend = () => {
                     setImageUrls((prevUrls: ImageUrlSortable[]) => [
                         ...prevUrls,
-                        { id: prevUrls.length + index, url: reader.result as string }
+                        { id: prevUrls.length, url: reader.result as string }
                     ]);
                 };
                 reader.readAsDataURL(file);
@@ -68,7 +68,8 @@ const ProductForm: React.FC<ProductFormType> = ({
             slug,
             description,
             price,
-            images: images
+            images,
+            imageUrls: imageUrls.filter((imageUrl) => imageUrl.url.startsWith('/uploads')).map((imageUrl) => imageUrl.url)
         })}>
             <label htmlFor="name">
                 <span>Name</span>

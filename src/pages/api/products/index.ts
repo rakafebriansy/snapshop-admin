@@ -46,7 +46,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             if (files.images) {
                 for (const file of files.images) {
                     const filePath = await ServerHelper.uploadFile(file, slug);
-
                     imageUrls.push(filePath);
                 }
             }

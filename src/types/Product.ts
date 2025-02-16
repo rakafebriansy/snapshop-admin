@@ -15,5 +15,6 @@ export interface ProductRequestType {
     name: string;
     description: string;
     price: number;
-    images: FileList | null
+    images?: FileList | null,
+    imageUrls?: string[]
 }
