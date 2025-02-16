@@ -9,7 +9,7 @@ export const config = {
 };
 
 const parseForm = (req: NextApiRequest) => {
-    const form = new IncomingForm({ multiples: false });
+    const form = new IncomingForm({ multiples: true });
 
     return new Promise<{ fields: any; files: any }>((resolve, reject) => {
         form.parse(req, (err, fields, files) => {
@@ -25,9 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (req.method === "GET") {
         const products: ProductDoc[] = await Product.find();
         return res.status(200).json(products);
-    }
-
-    if (req.method === "POST") {
+    } else if (req.method === "POST") {
         try {
             const { fields, files } = await parseForm(req);
 
@@ -40,14 +38,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 return res.status(400).json({ message: "All fields are required." });
             }
 
-            let filePath = "";
+            let imageUrls: string[] = [];
 
+            console.log(files)
 
-            if (files.image) {
-                const file = files.image[0];
-                const fileData = fs.readFileSync(file.filepath);
-                filePath = `/uploads/${file.originalFilename}`;
-                fs.writeFileSync(`./public${filePath}`, fileData);
+            if (files.images) {
+                for (const file of files.images) {
+                    const fileData = fs.readFileSync(file.filepath);
+                    const filePath = `/uploads/${file.originalFilename}`;
+                    fs.writeFileSync(`./public${filePath}`, fileData);
+
+                    imageUrls.push(filePath);
+                }
             }
 
             const productDoc: ProductDoc = await Product.create({
@@ -55,7 +57,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 description,
                 slug,
                 price,
-                imageUrl: filePath,
+                imageUrls,
             });
 
             return res.status(201).json('productDoc');

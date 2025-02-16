@@ -6,7 +6,7 @@ export interface ProductType {
     name: string;
     description: string;
     price: number;
-    imageUrl: string
+    imageUrls: string[]
 }
 
 export interface ProductRequestType {
@@ -15,5 +15,5 @@ export interface ProductRequestType {
     name: string;
     description: string;
     price: number;
-    image: File | null
+    images: FileList | null
 }

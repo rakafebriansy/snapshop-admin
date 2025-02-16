@@ -18,27 +18,37 @@ const ProductForm: React.FC<ProductFormType> = ({
         slug: existingSlug,
         description: existingDescription,
         price: existingPrice,
-        imageUrl: existingImage
+        imageUrls: existingImages
     } = product;
 
-    const [name, setName] = useState(existingName);
-    const [slug, setSlug] = useState(existingSlug);
-    const [description, setDescription] = useState(existingDescription);
-    const [price, setPrice] = useState(String(existingPrice));
-    const [imageUrl, setImageUrl] = useState(existingImage);
-    const [image, setImage] = useState<File | null>(null);
+    const [name, setName] = useState<string>(existingName || '');
+    const [slug, setSlug] = useState<string>(existingSlug || '');
+    const [description, setDescription] = useState<string>(existingDescription || '');
+    const [price, setPrice] = useState<string>(String(existingPrice || ''));
+    const [imageUrls, setImageUrls] = useState<string[]>(existingImages || []);
+    const [images, setImages] = useState<File[]>([]);
 
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-        const file = e.target.files?.[0];
-        if(file) {
-            setImage(file);
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setImageUrl(reader.result as string);
-            }
-            reader.readAsDataURL(file);
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files;
+        if (files) {
+            const newFiles = Array.from(files);
+            setImages([...images, ...newFiles]);
+
+            newFiles.forEach((file) => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    setImageUrls((prevUrls) => [...prevUrls, reader.result as string]);
+                };
+                reader.readAsDataURL(file);
+            });
         }
-    }
+    };
+
+    const handleRemoveFile = (indexToRemove: number) => {
+        setImages((prevImages) => prevImages.filter((_, index) => index !== indexToRemove));
+        setImageUrls((prevUrls) => prevUrls.filter((_, index) => index !== indexToRemove));
+    };
+
 
     return (
         <form onSubmit={(e) => callback(e, {
@@ -47,7 +57,7 @@ const ProductForm: React.FC<ProductFormType> = ({
             slug,
             description,
             price,
-            image
+            images
         })}>
             <label htmlFor="name">
                 <span>Name</span>
@@ -98,20 +108,30 @@ const ProductForm: React.FC<ProductFormType> = ({
             </label>
             <div className='block'>
                 <span>Photo</span>
-                <label htmlFor='photo' className='rounded-md select-none cursor-pointer text-gray-500 flex w-24 h-24 border border-gray-500/40 text-clip items-center justify-center'>
-                    {image ? (
-                        <Image src={imageUrl ?? null} alt={name ?? 'Image Preview'} width={200} height={200} className='w-full h-full object-contain'/>
-                    ) : (
+                <div className="flex h-24 gap-3">
+                    {imageUrls && imageUrls?.length > 0 && (
                         <>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
-                            </svg>
-                            <span className='text-sm'>Upload</span>
+                            {
+                                imageUrls.map((imageUrl, index) => (
+                                    <div className="relative">
+                                        <svg onClick={() => handleRemoveFile(index)} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="size-5 absolute bg-white cursor-pointer hover:bg-gray-100 rounded-full p-1 top-0 right-0">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                                        </svg>
+                                        <Image src={imageUrl ?? null} alt={name ?? 'Image Preview'} width={200} height={200} className='w-24 h-full object-contain' />
+                                    </div>
+                                ))
+                            }
                         </>
                     )}
-                    <input type="file" onChange={handleImageChange} id="photo" className='hidden' />
-                </label>
-                <span className='block mt-2 text-sm'>{image ? image.name : 'No photo in this product'}</span>
+                    <label htmlFor='photo' className='rounded-md select-none cursor-pointer text-gray-500 flex h-full w-24 border border-gray-500/40 text-clip items-center justify-center'>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+                        </svg>
+                        <span className='text-sm'>Upload</span>
+                        <input type="file" onChange={handleImageChange} id="photo" className='hidden' />
+                        <span className='block mt-2 text-sm'>{imageUrls && imageUrls?.length < 0 ? 'No photo in this product' : ''}</span>
+                    </label>
+                </div>
             </div>
             <button className='button-primary mt-5' type='submit'>Save</button>
         </form>

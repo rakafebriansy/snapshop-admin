@@ -13,25 +13,29 @@ const NewProductsPage: React.FC = ({ }) => {
         slug: '',
         description: '',
         price: 0,
-        imageUrl: ''
+        imageUrls: []
     };
 
     const store = async (e: React.FormEvent<HTMLFormElement>, product: ProductRequestType) => {
         e.preventDefault();
         try {
-            if(!product.image) {
-                throw new Error('Image is required.');
+            if (!product.images || product.images.length === 0) {
+                throw new Error('At least one image is required.');
             }
+            
             const formData: FormData = new FormData();
             formData.append('name', product.name);
             formData.append('slug', product.slug);
             formData.append('description', product.description);
             formData.append('price', String(product.price));
-            formData.append('image', product.image);
+            Array.from(product.images).forEach((file, index) => {
+                formData.append(`images`, file);
+            });
             
             await ProductService.store(formData);
             push('/products');
         } catch (error) {
+            console.log((error as Error).message);
             alert('Error');
         }
     };
