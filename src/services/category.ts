@@ -1,12 +1,23 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 import logger from "../lib/logger";
-import { ProductDoc } from "../models/Product";
 import { CategoryRequestType } from "../types/Category";
+import { CategoryDoc } from "../models/Category";
 
 class CategoryService {
-    static async store(data: CategoryRequestType, isServer: boolean = false): Promise<ProductDoc> {
+    static async index(isServer: boolean = false): Promise<CategoryDoc[]> {
         try {
-            const response: AxiosResponse<ProductDoc> = await axios.post(`${isServer ? process.env.NEXT_PUBLIC_API_URL : ''}/api/categories`, data, {
+            const response: AxiosResponse<CategoryDoc[]> = await axios.get(`${isServer ? process.env.NEXT_PUBLIC_API_URL : ''}/api/categories`);
+            return response.data;
+        } catch (error) {
+            if (error instanceof AxiosError) {
+                logger.error(`/services/category/index: ${(error as Error)}`);
+            }
+            throw error;
+        }
+    }
+    static async store(data: CategoryRequestType, isServer: boolean = false): Promise<CategoryDoc> {
+        try {
+            const response: AxiosResponse<CategoryDoc> = await axios.post(`${isServer ? process.env.NEXT_PUBLIC_API_URL : ''}/api/categories`, data, {
                 headers: {
                     "Content-Type": "application/json",
                 },

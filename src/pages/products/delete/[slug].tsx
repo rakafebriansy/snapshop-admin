@@ -10,19 +10,24 @@ const DeleteProductPage: React.FC = ({ }) => {
     const router = useRouter();
     const { slug } = router.query;
     const [product, setProduct] = useState<ProductDoc | undefined>(undefined);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         if (slug) {
             const getProduct = async () => {
                 try {
+                    setIsLoading(true);
                     const product: ProductDoc = await ProductService.show(slug as string);
                     setProduct(product);
                 } catch (error) {
+                    router.back();
                     swalAlert({
                         isSuccess: false,
                         title: 'Something went wrong!',
                         text: `${(error as Error).message}.`
                     });
+                } finally {
+                    setIsLoading(false);
                 }
             };
 
@@ -52,13 +57,15 @@ const DeleteProductPage: React.FC = ({ }) => {
         }
     };
 
-    if (!product) {
-        return <div>Loading...</div>;
+    if (!isLoading) {
+        return <div className='w-full h-full flex justify-center items-center'>
+                <h1>Loading...</h1>
+            </div>;
     }
 
     return (
         <Layout>
-            <p>Do you really want to delete product {product.name}?</p>
+            <p>Do you really want to delete product {product?.name}?</p>
             <div className="flex gap-3 mt-3">
                 <button className='button-light' onClick={() => router.back()}>No</button>
                 <button className='button-danger' onClick={remove}>Yes</button>

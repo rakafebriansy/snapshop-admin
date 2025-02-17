@@ -19,6 +19,12 @@ export async function getServerSideProps() {
             title: 'Something went wrong!',
             text: `${(error as Error).message}.`
         });
+        return {
+            props: {
+                products: [],
+                error: (error as Error).message
+            }
+        };
     }
 }
 
@@ -37,7 +43,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ products }: ProductsPagePro
                     <h1>No products found.</h1>
                 </div>
             ) : (
-                <table className='basic mt-2'>
+                <table className='basic mt-2 max-w-[50rem]'>
                     <thead>
                         <tr>
                             <td>Product name</td>

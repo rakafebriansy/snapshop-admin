@@ -7,7 +7,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     await mongooseConnect();
 
     try {
-        if (req.method === "POST") {
+        if (req.method === 'GET') {
+            const categories: CategoryDoc[] = await Category.find();
+            return res.status(200).json(categories);
+        } else if (req.method === "POST") {
             const { name } = req.body;
 
             const categoryDoc: CategoryDoc = await Category.create({
