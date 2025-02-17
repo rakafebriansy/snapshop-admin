@@ -32,10 +32,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         } else if (req.method === "POST") {
             const { fields, files } = await parseForm(req);
 
-            const name = fields.name?.[0]?.trim() || "";
-            const description = fields.description?.[0]?.trim() || "";
-            const slug = fields.slug?.[0]?.trim() || "";
-            const price = fields.price?.[0] ? parseFloat(fields.price?.[0] as string) : NaN;
+            const name: string = fields.name?.[0]?.trim() || "";
+            const description: string = fields.description?.[0]?.trim() || "";
+            const slug: string = fields.slug?.[0]?.trim() || "";
+            const price: number = fields.price?.[0] ? parseFloat(fields.price?.[0] as string) : NaN;
 
             if (!name || !description || !slug || isNaN(price) || price <= 0) {
                 return res.status(400).json({ errors: "All fields are required." });
@@ -45,7 +45,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             if (files.images) {
                 for (const file of files.images) {
-                    const filePath = await ServerHelper.uploadFile(file, slug);
+                    const filePath: string = await ServerHelper.uploadFile(file, slug);
                     imageUrls.push(filePath);
                 }
             }

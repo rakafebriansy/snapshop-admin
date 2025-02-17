@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 
-export interface ProductRequestType {
+export type ProductRequestType = {
     _id?: Types.ObjectId;
     slug: string;
     name: string;
@@ -8,4 +8,8 @@ export interface ProductRequestType {
     price: number;
     images?: FileList | null,
     imageUrls?: string[]
+}
+
+export type ProductParamsType = {
+    slug?: string | string[];
 }

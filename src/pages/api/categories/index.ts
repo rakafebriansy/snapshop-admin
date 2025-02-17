@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import logger from "../../../lib/logger";
 import { mongooseConnect } from "../../../lib/mongoose";
 import { Category, CategoryDoc } from "../../../models/Category";
+import { Types } from "mongoose";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     await mongooseConnect();
@@ -11,7 +12,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const categories: CategoryDoc[] = await Category.find();
             return res.status(200).json(categories);
         } else if (req.method === "POST") {
-            const { name } = req.body;
+            const { name, parentCategory }: {name: string, parentCategory: Types.ObjectId} = req.body;
 
             if (!name) {
                 return res.status(400).json({ errors: "Name field are required" });
@@ -19,6 +20,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             const categoryDoc: CategoryDoc = await Category.create({
                 name,
+                parentCategory
             });
 
             return res.status(201).json(categoryDoc);

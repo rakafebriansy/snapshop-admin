@@ -29,6 +29,7 @@ const CategoriesPage: React.FC = ({ }) => {
             });
             await getCategories();
         } catch (error) {
+            console.log(error)
             const message = error instanceof AxiosError ? error.response?.data.errors : (error as Error).message;
             logger.error(`/pages/categories/index@store: ${message}`);
             swalAlert({

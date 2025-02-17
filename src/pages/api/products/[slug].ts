@@ -2,10 +2,10 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { ProductDoc, Product } from "../../../models/Product";
 import { mongooseConnect } from "../../../lib/mongoose";
 import { DeleteResult } from "mongoose";
-import fs from "fs";
 import { IncomingForm } from "formidable";
 import logger from "../../../lib/logger";
 import ServerHelper from "../../../utils/serverHelper";
+import { ProductParamsType } from "../../../types/Product";
 
 export const config = {
     api: {
@@ -34,7 +34,7 @@ export default async function handler(
         await mongooseConnect();
 
         if (method == 'GET') {
-            const { slug } = req.query;
+            const { slug }: ProductParamsType = req.query;
 
             if (typeof slug !== 'string') {
                 res.status(400).json({
@@ -52,34 +52,34 @@ export default async function handler(
 
             return res.status(200).json(product);
         } else if (method == 'PUT') {
-            const { slug } = req.query;
+            const { slug }: ProductParamsType = req.query;
 
             if (typeof slug !== 'string') return res.status(400).json({ errors: 'Invalid slug format' });
 
-            const product = await Product.findOne({ slug: slug });
+            const product: ProductDoc | null = await Product.findOne({ slug: slug });
             if (!product) return res.status(404).json({ errors: 'Product not found' });
 
             const { fields, files } = await parseForm(req);
 
-            const name = fields.name?.[0]?.trim() || '';
-            const description = fields.description?.[0]?.trim() || '';
-            const price = fields.price?.[0] ? parseFloat(fields.price?.[0] as string) : NaN;
-            const existingImages = fields.imageUrls?.[0];
+            const name: string = fields.name?.[0]?.trim() || '';
+            const description: string = fields.description?.[0]?.trim() || '';
+            const price: number = fields.price?.[0] ? parseFloat(fields.price?.[0] as string) : NaN;
+            const existingImages: string = fields.imageUrls?.[0];
 
             if (!name || !description || !slug || isNaN(price) || price <= 0) {
                 return res.status(400).json({ errors: 'All fields are required.' });
             }
 
-            let imageUrls = JSON.parse(existingImages || '[]');
+            let imageUrls: string[] = JSON.parse(existingImages || '[]');
 
-            const removedImages = product.imageUrls.filter((url: string) => !imageUrls.includes(url));
+            const removedImages: string[] = product.imageUrls.filter((url: string) => !imageUrls.includes(url));
             for (const imageUrl of removedImages) {
                 await ServerHelper.deleteFile(imageUrl);
             }
 
             if (files.images) {
                 for (const file of files.images) {
-                    const filePath = await ServerHelper.uploadFile(file, slug);
+                    const filePath: string = await ServerHelper.uploadFile(file, slug);
                     imageUrls.push(filePath);
                 }
             }
@@ -106,7 +106,7 @@ export default async function handler(
 
             return res.status(200).json(productDoc);
         } else if (method == 'DELETE') {
-            const { slug } = req.query;
+            const { slug }: ProductParamsType = req.query;
 
             if (typeof slug !== 'string') {
                 res.status(400).json({
