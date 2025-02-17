@@ -2,6 +2,7 @@ import React from 'react'
 import { signIn } from "next-auth/react"
 import { useRouter } from 'next/router'
 import logger from '../../lib/logger'
+import { swalAlert } from '../../lib/swal'
 
 const LoginPage: React.FC = ({ }) => {
 
@@ -10,7 +11,11 @@ const LoginPage: React.FC = ({ }) => {
             await signIn('google');
         } catch (error) {
             logger.error(`/pages/login: ${(error as Error).message}`);
-            alert('Error');
+            swalAlert({
+                isSuccess: false,
+                title: 'Something went wrong!',
+                text: `${(error as Error).message}.`
+            });
         }
     }
 

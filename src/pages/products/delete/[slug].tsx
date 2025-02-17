@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import ProductService from '../../../services/product';
 import logger from '../../../lib/logger';
 import { ProductDoc } from '../../../models/Product';
+import { swalAlert } from '../../../lib/swal';
 
 const DeleteProductPage: React.FC = ({ }) => {
     const router = useRouter();
@@ -17,7 +18,11 @@ const DeleteProductPage: React.FC = ({ }) => {
                     const product: ProductDoc = await ProductService.show(slug as string);
                     setProduct(product);
                 } catch (error) {
-                    alert('Error');
+                    swalAlert({
+                        isSuccess: false,
+                        title: 'Something went wrong!',
+                        text: `${(error as Error).message}.`
+                    });
                 }
             };
 
@@ -32,9 +37,18 @@ const DeleteProductPage: React.FC = ({ }) => {
             }
             await ProductService.delete(product.slug);
             router.push('/products');
+            swalAlert({
+                isSuccess: true,
+                title: 'Success!',
+                text: 'Successfully delete product.'
+            });
         } catch (error) {
             logger.error(`/pages/products/delete: ${(error as Error)}`);
-            alert('Error');
+            swalAlert({
+                isSuccess: false,
+                title: 'Something went wrong!',
+                text: `${(error as Error).message}.`
+            });
         }
     };
 

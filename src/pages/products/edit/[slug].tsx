@@ -6,6 +6,7 @@ import ProductForm from '../../../components/products/ProductForm';
 import { ProductRequestType } from '../../../types/Product';
 import logger from '../../../lib/logger';
 import { ProductDoc } from '../../../models/Product';
+import { swalAlert } from '../../../lib/swal';
 
 const EditProductPage: React.FC = ({ }) => {
     const router = useRouter();
@@ -36,9 +37,18 @@ const EditProductPage: React.FC = ({ }) => {
 
             await ProductService.update(slug as string, formData);
             router.push('/products');
+            swalAlert({
+                isSuccess: true,
+                title: 'Success!',
+                text: 'Successfully update product.'
+            });
         } catch (error) {
             logger.error(`/pages/products/edit: ${(error as Error)}`);
-            alert('Error');
+            swalAlert({
+                isSuccess: false,
+                title: 'Something went wrong!',
+                text: `${(error as Error).message}.`
+            });
         }
     };
 
@@ -49,7 +59,11 @@ const EditProductPage: React.FC = ({ }) => {
                     const product: ProductDoc = await ProductService.show(slug as string) as ProductDoc;
                     setProduct(product);
                 } catch (error) {
-                    alert('Error');
+                    swalAlert({
+                        isSuccess: false,
+                        title: 'Something went wrong!',
+                        text: `${(error as Error).message}.`
+                    });
                 }
             };
 

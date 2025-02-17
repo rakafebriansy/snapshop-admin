@@ -3,13 +3,22 @@ import Layout from '../../components/Layout';
 import Link from 'next/link';
 import ProductService from '../../services/product';
 import { ProductDoc } from '../../models/Product';
+import { swalAlert } from '../../lib/swal';
 
 export async function getServerSideProps() {
-    const data: ProductDoc[] = await ProductService.index(true);
-    return {
-        props: {
-            products: data
+    try {
+        const data: ProductDoc[] = await ProductService.index(true);
+        return {
+            props: {
+                products: data
+            }
         }
+    } catch (error) {
+        swalAlert({
+            isSuccess: false,
+            title: 'Something went wrong!',
+            text: `${(error as Error).message}.`
+        });
     }
 }
 

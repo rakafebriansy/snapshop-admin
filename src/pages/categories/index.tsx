@@ -3,6 +3,7 @@ import Layout from '../../components/Layout';
 import CategoryService from '../../services/category';
 import { CategoryRequestType } from '../../types/Category';
 import logger from '../../lib/logger';
+import { swalAlert } from '../../lib/swal';
 
 const CategoriesPage: React.FC = ({ }) => {
 
@@ -16,9 +17,18 @@ const CategoriesPage: React.FC = ({ }) => {
             };
             await CategoryService.store(category);
             setName('');
+            swalAlert({
+                isSuccess: true,
+                title: 'Success!',
+                text: 'Successfully add new category.'
+            });
         } catch (error) {
             logger.error(`/pages/categories/index: ${(error as Error)}`);
-            alert('Error');
+            swalAlert({
+                isSuccess: false,
+                title: 'Something went wrong!',
+                text: `${(error as Error).message}.`
+            });
         }
     };
 
