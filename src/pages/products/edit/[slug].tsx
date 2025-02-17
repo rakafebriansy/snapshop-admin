@@ -7,6 +7,7 @@ import { ProductRequestType } from '../../../types/Product';
 import logger from '../../../lib/logger';
 import { ProductDoc } from '../../../models/Product';
 import { swalAlert } from '../../../lib/swal';
+import { AxiosError } from 'axios';
 
 const EditProductPage: React.FC = ({ }) => {
     const router = useRouter();
@@ -43,11 +44,12 @@ const EditProductPage: React.FC = ({ }) => {
                 text: 'Successfully update product.'
             });
         } catch (error) {
-            logger.error(`/pages/products/edit: ${(error as Error)}`);
+            const message = error instanceof AxiosError ? error.response?.data.errors : (error as Error).message;
+            logger.error(`/pages/products/edit@update: ${message}`);
             swalAlert({
                 isSuccess: false,
                 title: 'Something went wrong!',
-                text: `${(error as Error).message}.`
+                text: `${message}.`
             });
         }
     };
@@ -59,10 +61,12 @@ const EditProductPage: React.FC = ({ }) => {
                     const product: ProductDoc = await ProductService.show(slug as string) as ProductDoc;
                     setProduct(product);
                 } catch (error) {
+                    const message = error instanceof AxiosError ? error.response?.data.errors : (error as Error).message;
+                    logger.error(`/pages/products/edit@get: ${message}`);
                     swalAlert({
                         isSuccess: false,
                         title: 'Something went wrong!',
-                        text: `${(error as Error).message}.`
+                        text: `${message}.`
                     });
                 }
             };

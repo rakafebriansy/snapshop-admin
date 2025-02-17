@@ -28,9 +28,9 @@ class ProductService {
         }
     }
 
-    static async store(data: FormData, isServer: boolean = false): Promise<ProductDoc> {
+    static async store(product: FormData, isServer: boolean = false): Promise<ProductDoc> {
         try {
-            const response: AxiosResponse<ProductDoc> = await axios.post(`${isServer ? process.env.NEXT_PUBLIC_API_URL : ''}/api/products`, data, {
+            const response: AxiosResponse<ProductDoc> = await axios.post(`${isServer ? process.env.NEXT_PUBLIC_API_URL : ''}/api/products`, product, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
@@ -44,9 +44,9 @@ class ProductService {
         }
     }
 
-    static async update(slug: string, data: FormData, isServer: boolean = false): Promise<ProductDoc> {
+    static async update(slug: string, product: FormData, isServer: boolean = false): Promise<ProductDoc> {
         try {
-            const response: AxiosResponse<ProductDoc> = await axios.put(`${isServer ? process.env.NEXT_PUBLIC_API_URL : ''}/api/products/${slug}`, data, {
+            const response: AxiosResponse<ProductDoc> = await axios.put(`${isServer ? process.env.NEXT_PUBLIC_API_URL : ''}/api/products/${slug}`, product, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },

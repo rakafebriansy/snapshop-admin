@@ -5,6 +5,7 @@ import ProductService from '../../../services/product';
 import logger from '../../../lib/logger';
 import { ProductDoc } from '../../../models/Product';
 import { swalAlert } from '../../../lib/swal';
+import { AxiosError } from 'axios';
 
 const DeleteProductPage: React.FC = ({ }) => {
     const router = useRouter();
@@ -21,10 +22,12 @@ const DeleteProductPage: React.FC = ({ }) => {
                     setProduct(product);
                 } catch (error) {
                     router.back();
+                    const message = error instanceof AxiosError ? error.response?.data.errors : (error as Error).message;
+                    logger.error(`/pages/products/delete@get: ${message}`);
                     swalAlert({
                         isSuccess: false,
                         title: 'Something went wrong!',
-                        text: `${(error as Error).message}.`
+                        text: `${message}.`
                     });
                 } finally {
                     setIsLoading(false);
@@ -48,11 +51,12 @@ const DeleteProductPage: React.FC = ({ }) => {
                 text: 'Successfully delete product.'
             });
         } catch (error) {
-            logger.error(`/pages/products/delete: ${(error as Error)}`);
+            const message = error instanceof AxiosError ? error.response?.data.errors : (error as Error).message;
+            logger.error(`/pages/products/delete@remove: ${message}`);
             swalAlert({
                 isSuccess: false,
                 title: 'Something went wrong!',
-                text: `${(error as Error).message}.`
+                text: `${message}.`
             });
         }
     };

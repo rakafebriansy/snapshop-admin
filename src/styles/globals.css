@@ -36,11 +36,11 @@ body {
   @apply bg-gray-600 text-white py-1 px-4 rounded-md hover:bg-gray-700 active:bg-gray-800 ;
 }
 
-input, textarea {
+input, textarea, select {
   @apply border border-gray-500/40 rounded-md px-2 py-2 w-full placeholder:text-gray-300 text-sm;
 }
 
-input:focus, textarea:focus {
+input:focus, textarea:focus, select:focus {
   @apply outline-green-600 border-green-600;
 }
 

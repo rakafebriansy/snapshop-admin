@@ -5,17 +5,20 @@ import { CategoryRequestType } from '../../types/Category';
 import logger from '../../lib/logger';
 import { swalAlert } from '../../lib/swal';
 import { CategoryDoc } from '../../models/Category';
+import { AxiosError } from 'axios';
 
 const CategoriesPage: React.FC = ({ }) => {
 
     const [name, setName] = useState('');
     const [categories, setCategories] = useState<CategoryDoc[] | undefined>(undefined);
+    const [parentCategory, setParentCategory] = useState<string>('');
 
     const store = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
             const category: CategoryRequestType = {
-                name
+                name,
+                parentCategory
             };
             await CategoryService.store(category);
             setName('');
@@ -26,11 +29,12 @@ const CategoriesPage: React.FC = ({ }) => {
             });
             await getCategories();
         } catch (error) {
-            logger.error(`/pages/categories/store: ${(error as Error)}`);
+            const message = error instanceof AxiosError ? error.response?.data.errors : (error as Error).message;
+            logger.error(`/pages/categories/index@store: ${message}`);
             swalAlert({
                 isSuccess: false,
                 title: 'Something went wrong!',
-                text: `${(error as Error).message}.`
+                text: `${message}.`
             });
         }
     };
@@ -44,11 +48,12 @@ const CategoriesPage: React.FC = ({ }) => {
         try {
             getCategories();
         } catch (error) {
-            logger.error(`/pages/categories/index: ${(error as Error)}`);
+            const message = error instanceof AxiosError ? error.response?.data.errors : (error as Error).message;
+            logger.error(`/pages/categories/index@get: ${message}`);
             swalAlert({
                 isSuccess: false,
                 title: 'Something went wrong!',
-                text: `${(error as Error).message}.`
+                text: `${message}.`
             });
         }
     }, []);
@@ -67,6 +72,12 @@ const CategoriesPage: React.FC = ({ }) => {
                     value={name}
                     onChange={e => setName(e.target.value)}
                 />
+                <select value={parentCategory} onChange={e => setParentCategory(e.target.value)}>
+                    <option>No parent category</option>
+                    {categories && categories.length > 0 && categories.map(category => (
+                        <option value={category._id.toString()}>{category.name}</option>
+                    ))}
+                </select>
                 <button className='button-primary' type='submit'>Save</button>
             </form>
             <table className='basic max-w-[30rem]'>

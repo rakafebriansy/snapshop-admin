@@ -38,7 +38,7 @@ export default async function handler(
 
             if (typeof slug !== 'string') {
                 res.status(400).json({
-                    message: 'Invalid slug format'
+                    errors: 'Invalid slug format'
                 });
             }
 
@@ -46,7 +46,7 @@ export default async function handler(
 
             if (!product) {
                 res.status(404).json({
-                    message: 'Product is not found'
+                    errors: 'Product is not found'
                 });
             }
 
@@ -54,10 +54,10 @@ export default async function handler(
         } else if (method == 'PUT') {
             const { slug } = req.query;
 
-            if (typeof slug !== 'string') return res.status(400).json({ message: 'Invalid slug format' });
+            if (typeof slug !== 'string') return res.status(400).json({ errors: 'Invalid slug format' });
 
             const product = await Product.findOne({ slug: slug });
-            if (!product) return res.status(404).json({ message: 'Product not found' });
+            if (!product) return res.status(404).json({ errors: 'Product not found' });
 
             const { fields, files } = await parseForm(req);
 
@@ -67,7 +67,7 @@ export default async function handler(
             const existingImages = fields.imageUrls?.[0];
 
             if (!name || !description || !slug || isNaN(price) || price <= 0) {
-                return res.status(400).json({ message: 'All fields are required.' });
+                return res.status(400).json({ errors: 'All fields are required.' });
             }
 
             let imageUrls = JSON.parse(existingImages || '[]');
@@ -100,7 +100,7 @@ export default async function handler(
 
             if (!productDoc) {
                 res.status(404).json({
-                    message: 'Product is not found'
+                    errors: 'Product is not found'
                 });
             }
 
@@ -110,7 +110,7 @@ export default async function handler(
 
             if (typeof slug !== 'string') {
                 res.status(400).json({
-                    message: 'Invalid slug format'
+                    errors: 'Invalid slug format'
                 });
             }
 
@@ -118,15 +118,15 @@ export default async function handler(
 
             if (!product) {
                 res.status(404).json({
-                    message: 'Product is not found'
+                    errors: 'Product is not found'
                 });
             }
 
             return res.status(200).json(product);
         }
-        return res.status(405).json({ message: "Method Not Allowed" });
+        return res.status(405).json({ errors: "Method Not Allowed" });
     } catch (error) {
         logger.error(`/pages/api/products/[slug]: ${(error as Error)}`);
-        return res.status(500).json({ message: "Internal Server Error", error: (error as Error) });
+        return res.status(500).json({ errors: "Internal Server Error", error: (error as Error) });
     }
 }

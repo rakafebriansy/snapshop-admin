@@ -38,7 +38,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const price = fields.price?.[0] ? parseFloat(fields.price?.[0] as string) : NaN;
 
             if (!name || !description || !slug || isNaN(price) || price <= 0) {
-                return res.status(400).json({ message: "All fields are required." });
+                return res.status(400).json({ errors: "All fields are required." });
             }
 
             let imageUrls: string[] = [];
@@ -60,9 +60,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             return res.status(201).json(productDoc);
         }
-        return res.status(405).json({ message: "Method Not Allowed" });
+        return res.status(405).json({ errors: "Method Not Allowed" });
     } catch (error) {
         logger.error(`/pages/api/products: ${(error as Error)}`);
-        return res.status(500).json({ message: "Internal Server Error", error: (error as Error) });
+        return res.status(500).json({ errors: "Internal Server Error", error: (error as Error) });
     }
 }

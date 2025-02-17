@@ -13,15 +13,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         } else if (req.method === "POST") {
             const { name } = req.body;
 
+            if (!name) {
+                return res.status(400).json({ errors: "Name field are required" });
+            }
+
             const categoryDoc: CategoryDoc = await Category.create({
                 name,
             });
 
             return res.status(201).json(categoryDoc);
         }
-        return res.status(405).json({ message: "Method Not Allowed" });
+        return res.status(405).json({ errors: "Method Not Allowed" });
     } catch (error) {
         logger.error(`/pages/api/categories: ${(error as Error)}`);
-        return res.status(500).json({ message: "Internal Server Error", error: (error as Error) });
+        return res.status(500).json({ errors: "Internal Server Error", error: (error as Error) });
     }
 }

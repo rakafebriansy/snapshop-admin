@@ -3,6 +3,7 @@ import { signIn } from "next-auth/react"
 import { useRouter } from 'next/router'
 import logger from '../../lib/logger'
 import { swalAlert } from '../../lib/swal'
+import { AxiosError } from 'axios'
 
 const LoginPage: React.FC = ({ }) => {
 
@@ -10,11 +11,12 @@ const LoginPage: React.FC = ({ }) => {
         try {
             await signIn('google');
         } catch (error) {
-            logger.error(`/pages/login: ${(error as Error).message}`);
+            const message = error instanceof AxiosError ? error.response?.data.errors : (error as Error).message;
+            logger.error(`/pages/login@login: ${message}`);
             swalAlert({
                 isSuccess: false,
                 title: 'Something went wrong!',
-                text: `${(error as Error).message}.`
+                text: `${message}.`
             });
         }
     }

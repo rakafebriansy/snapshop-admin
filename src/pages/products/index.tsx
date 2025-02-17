@@ -4,6 +4,8 @@ import Link from 'next/link';
 import ProductService from '../../services/product';
 import { ProductDoc } from '../../models/Product';
 import { swalAlert } from '../../lib/swal';
+import logger from '../../lib/logger';
+import { AxiosError } from 'axios';
 
 export async function getServerSideProps() {
     try {
@@ -18,6 +20,13 @@ export async function getServerSideProps() {
             isSuccess: false,
             title: 'Something went wrong!',
             text: `${(error as Error).message}.`
+        });
+        const message = error instanceof AxiosError ? error.response?.data.errors : (error as Error).message;
+        logger.error(`/pages/products/index@get: ${message}`);
+        swalAlert({
+            isSuccess: false,
+            title: 'Something went wrong!',
+            text: `${message}.`
         });
         return {
             props: {

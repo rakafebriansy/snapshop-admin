@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 import ProductForm from '../../../components/products/ProductForm';
 import logger from '../../../lib/logger';
 import { swalAlert } from '../../../lib/swal';
+import { AxiosError } from 'axios';
 
 const NewProductsPage: React.FC = ({ }) => {
 
@@ -42,11 +43,12 @@ const NewProductsPage: React.FC = ({ }) => {
                 text: 'Successfully add new product.'
             });
         } catch (error) {
-            logger.error(`/pages/products/new: ${(error as Error)}`);
+            const message = error instanceof AxiosError ? error.response?.data.errors : (error as Error).message;
+            logger.error(`/pages/products/new@store: ${message}`);
             swalAlert({
                 isSuccess: false,
                 title: 'Something went wrong!',
-                text: `${(error as Error).message}.`
+                text: `${message}.`
             });
         }
     };
