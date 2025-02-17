@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import Helper from '../../utils/helper';
-import { ProductType } from '../../types/Product';
 import Image from 'next/image';
 import { ReactSortable } from 'react-sortablejs';
+import { ProductRequestType } from '../../types/Product';
 
 export type ProductFormType = {
-    product: ProductType,
+    product: ProductRequestType,
     callback: Function,
     isEdit: boolean
 }
@@ -62,7 +62,7 @@ const ProductForm: React.FC<ProductFormType> = ({
 
 
     return (
-        <form onSubmit={(e) => callback(e, {
+        <form className='long-form' onSubmit={(e) => callback(e, {
             _id: product._id,
             name,
             slug,

@@ -37,7 +37,7 @@ body {
 }
 
 input, textarea {
-  @apply border border-gray-500/40 rounded-md px-2 py-2 w-full mb-2 placeholder:text-gray-300 text-sm;
+  @apply border border-gray-500/40 rounded-md px-2 py-2 w-full placeholder:text-gray-300 text-sm;
 }
 
 input:focus, textarea:focus {
@@ -66,4 +66,12 @@ table.basic tr td {
 
 table.basic a {
   @apply text-white text-sm py-1 px-3 rounded-md inline-flex gap-1;
+}
+
+form {
+  @apply flex gap-2 max-w-[30rem];
+}
+
+form.long-form {
+  @apply flex-col
 }

@@ -5,7 +5,7 @@ import logger from '../../lib/logger'
 
 const LoginPage: React.FC = ({ }) => {
 
-    const login = async () => {
+    const login = async (): Promise<void> => {
         try {
             await signIn('google');
         } catch (error) {

@@ -21,7 +21,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ products }: ProductsPagePro
 
     return (
         <Layout>
-            <Link href='/products/new' className='button-primary'>Add new product</Link>
+            <Link href='/products/new' className='button-primary'>&#43; Add new product</Link>
 
             {products.length < 1 ? (
                 <div className="w-full h-full flex justify-center items-center">

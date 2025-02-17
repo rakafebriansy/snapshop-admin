@@ -17,4 +17,4 @@ const ProductSchema: Schema = new Schema<ProductDoc>({
     imageUrls: [{ type: String, required: true }]
 });
 
-export const Product: Model<ProductDoc> = models.Product || model<ProductDoc>('product', ProductSchema);
+export const Product: Model<ProductDoc> = models?.Product || model<ProductDoc>('product', ProductSchema);

@@ -3,15 +3,16 @@ import Layout from '../../../components/Layout';
 import { useRouter } from 'next/router';
 import ProductService from '../../../services/product';
 import ProductForm from '../../../components/products/ProductForm';
-import { ProductRequestType, ProductType } from '../../../types/Product';
+import { ProductRequestType } from '../../../types/Product';
 import logger from '../../../lib/logger';
+import { ProductDoc } from '../../../models/Product';
 
 const EditProductPage: React.FC = ({ }) => {
     const router = useRouter();
     const { slug } = router.query;
-    const [product, setProduct] = useState<ProductType | undefined>(undefined);
+    const [product, setProduct] = useState<ProductDoc | undefined>(undefined);
 
-    const update = async (e: React.FormEvent<HTMLFormElement>, product: ProductRequestType) => {
+    const update = async (e: React.FormEvent<HTMLFormElement>, product: ProductRequestType): Promise<void> => {
         e.preventDefault();
         try {
             if (!((product.images && product.images.length > 1) || (product.imageUrls && product.imageUrls.length > 1))) {
@@ -45,7 +46,7 @@ const EditProductPage: React.FC = ({ }) => {
         if (slug) {
             const getProduct = async () => {
                 try {
-                    const product: ProductType = await ProductService.show(slug as string) as ProductType;
+                    const product: ProductDoc = await ProductService.show(slug as string) as ProductDoc;
                     setProduct(product);
                 } catch (error) {
                     alert('Error');

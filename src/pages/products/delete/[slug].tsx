@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from 'react'
 import Layout from '../../../components/Layout';
 import { useRouter } from 'next/router';
-import { ProductType } from '../../../types/Product';
 import ProductService from '../../../services/product';
 import logger from '../../../lib/logger';
+import { ProductDoc } from '../../../models/Product';
 
 const DeleteProductPage: React.FC = ({ }) => {
     const router = useRouter();
     const { slug } = router.query;
-    const [product, setProduct] = useState<ProductType | undefined>(undefined);
+    const [product, setProduct] = useState<ProductDoc | undefined>(undefined);
 
     useEffect(() => {
         if (slug) {
             const getProduct = async () => {
                 try {
-                    const product: ProductType = await ProductService.show(slug as string) as ProductType;
+                    const product: ProductDoc = await ProductService.show(slug as string);
                     setProduct(product);
                 } catch (error) {
                     alert('Error');
@@ -25,7 +25,7 @@ const DeleteProductPage: React.FC = ({ }) => {
         }
     }, [slug]);
 
-    const remove = async () => {
+    const remove = async (): Promise<void> => {
         try {
             if (!product) {
                 throw new Error('Product is required');

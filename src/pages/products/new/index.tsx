@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import Layout from '../../../components/Layout';
-import { ProductRequestType, ProductType } from '../../../types/Product';
+import { ProductRequestType } from '../../../types/Product';
 import ProductService from '../../../services/product';
 import { useRouter } from 'next/router';
 import ProductForm from '../../../components/products/ProductForm';
@@ -9,7 +9,7 @@ import logger from '../../../lib/logger';
 const NewProductsPage: React.FC = ({ }) => {
 
     const { push } = useRouter();
-    const product: ProductType = {
+    const product: ProductRequestType = {
         name: '',
         slug: '',
         description: '',
@@ -17,7 +17,7 @@ const NewProductsPage: React.FC = ({ }) => {
         imageUrls: []
     };
 
-    const store = async (e: React.FormEvent<HTMLFormElement>, product: ProductRequestType) => {
+    const store = async (e: React.FormEvent<HTMLFormElement>, product: ProductRequestType): Promise<void> => {
         e.preventDefault();
         try {
             if (!product.images || product.images.length === 0) {
@@ -29,7 +29,7 @@ const NewProductsPage: React.FC = ({ }) => {
             formData.append('slug', product.slug);
             formData.append('description', product.description);
             formData.append('price', String(product.price));
-            Array.from(product.images).forEach((file, index) => {
+            Array.from(product.images).forEach((file) => {
                 formData.append(`images`, file);
             });
             
