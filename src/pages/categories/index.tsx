@@ -6,6 +6,7 @@ import logger from '../../lib/logger';
 import { swalAlert } from '../../lib/swal';
 import { CategoryDoc } from '../../models/Category';
 import { AxiosError } from 'axios';
+import { Types } from 'mongoose';
 
 const CategoriesPage: React.FC = ({ }) => {
 
@@ -18,7 +19,7 @@ const CategoriesPage: React.FC = ({ }) => {
         try {
             const category: CategoryRequestType = {
                 name,
-                parentCategory
+                parentCategory: new Types.ObjectId(parentCategory)
             };
             await CategoryService.store(category);
             setName('');

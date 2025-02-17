@@ -1,7 +1,7 @@
 import { Types } from "mongoose";
 
-export interface CategoryRequestType {
+export type CategoryRequestType = {
     _id?: Types.ObjectId;
     name: string;
-    parentCategory?: string;
+    parentCategory?: Types.ObjectId;
 }
