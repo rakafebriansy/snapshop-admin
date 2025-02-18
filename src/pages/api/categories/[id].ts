@@ -25,15 +25,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return res.status(201).json(categoryDoc);
         } else if (req.method == 'DELETE') {
             const { id }: CategoryParamsType = req.query;
-            console.log(id instanceof Types.ObjectId)
 
-            if (!Types.ObjectId.isValid(id as Types.ObjectId)) {
-                return res.status(400).json({ errors: "Invalid ID Format" });
-            }
-        
+            if (!Types.ObjectId.isValid(id as Types.ObjectId)) return res.status(400).json({ errors: "Invalid ID Format" });
+
+            const isParent = await Category.exists({ parent: id });
+
+            if (isParent) return res.status(400).json({ errors: "Category is still used as parent by another category" });
+
             const result: DeleteResult = await Category.deleteOne({ _id: id });
 
-            if (!result) res.status(404).json({ errors: 'Product is not found' });
+            if (!result.deletedCount) res.status(404).json({ errors: 'Category is not found' });
 
             return res.status(200).json(result);
         }

@@ -100,9 +100,10 @@ const CategoriesPage: React.FC = ({ }) => {
                 text: "You won't be able to revert this!",
                 icon: "warning",
                 showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Yes, delete it!"
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#35538",
+                confirmButtonText: "Yes, delete it!",
+                reverseButtons: true
             });
 
             if (result.isConfirmed && id) {

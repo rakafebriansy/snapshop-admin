@@ -108,7 +108,7 @@ export default async function handler(
 
             const result: DeleteResult = await Product.deleteOne({ slug: slug });
 
-            if (!result) res.status(404).json({ errors: 'Product is not found' });
+            if (!result.deletedCount) res.status(404).json({ errors: 'Product is not found' });
 
             return res.status(200).json(result);
         }
