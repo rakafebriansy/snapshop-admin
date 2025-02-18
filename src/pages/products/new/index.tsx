@@ -34,9 +34,9 @@ const NewProductsPage: React.FC = ({ }) => {
                 formData.append(`images`, file);
             });
             if(product.categoryId) {
-                formData.append('categoryId',String(product.categoryId));
+                formData.append('categoryId',(product.categoryId))
             }
-            
+
             await ProductService.store(formData);
             push('/products');
             swalAlert({

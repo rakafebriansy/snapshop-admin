@@ -8,16 +8,17 @@ import logger from '../../../lib/logger';
 import { ProductDoc } from '../../../models/Product';
 import { swalAlert } from '../../../lib/swal';
 import { AxiosError } from 'axios';
+import { CategoryDoc } from '../../../models/Category';
 
 const EditProductPage: React.FC = ({ }) => {
     const router = useRouter();
     const { slug } = router.query;
-    const [product, setProduct] = useState<ProductDoc | undefined>(undefined);
+    const [product, setProduct] = useState<ProductRequestType | undefined>(undefined);
 
     const update = async (e: React.FormEvent<HTMLFormElement>, product: ProductRequestType): Promise<void> => {
         e.preventDefault();
         try {
-            if (!((product.images && product.images.length > 1) || (product.imageUrls && product.imageUrls.length > 1))) {
+            if (!((product.images && product.images.length > 1) || (product.imageUrls && product.imageUrls.length > 0))) {
                 throw new Error('At least one image is required.');
             }
 
@@ -34,6 +35,9 @@ const EditProductPage: React.FC = ({ }) => {
             }
             if (product.imageUrls) {
                 formData.append('imageUrls', JSON.stringify(product.imageUrls));
+            }
+            if(product.categoryId) {
+                formData.append('categoryId',String(product.categoryId));
             }
 
             await ProductService.update(slug as string, formData);
@@ -58,8 +62,17 @@ const EditProductPage: React.FC = ({ }) => {
         if (slug) {
             const getProduct = async () => {
                 try {
-                    const product: ProductDoc = await ProductService.show(slug as string) as ProductDoc;
-                    setProduct(product);
+                    const productDoc: ProductDoc = await ProductService.show(slug as string) as ProductDoc;
+                    const productRequest: ProductRequestType = {
+                        _id: productDoc._id,
+                        slug: productDoc.slug,
+                        name: productDoc.name,
+                        description: productDoc.description,
+                        price: productDoc.price,
+                        categoryId: productDoc.category ? String((productDoc.category as CategoryDoc)._id) : undefined,
+                        imageUrls: productDoc.imageUrls,
+                    }
+                    setProduct(productRequest);
                 } catch (error) {
                     const message = error instanceof AxiosError ? error.response?.data.errors : (error as Error).message;
                     logger.error(`/pages/products/edit@get: ${message}`);

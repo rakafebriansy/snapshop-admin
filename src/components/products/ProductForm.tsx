@@ -29,7 +29,8 @@ const ProductForm: React.FC<ProductFormType> = ({
         slug: existingSlug,
         description: existingDescription,
         price: existingPrice,
-        imageUrls: existingImages
+        imageUrls: existingImages,
+        categoryId: existingCategory
     } = product;
 
     const [name, setName] = useState<string>(existingName || '');
@@ -41,7 +42,7 @@ const ProductForm: React.FC<ProductFormType> = ({
     );
     const [images, setImages] = useState<File[]>([]);
     const [categories, setCategories] = useState<CategoryDoc[] | undefined>(undefined);
-    const [categoryId, setCategoryId] = useState<string>('');
+    const [categoryId, setCategoryId] = useState<string>(existingCategory || '');
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;

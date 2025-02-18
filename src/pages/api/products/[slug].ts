@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { ProductDoc, Product } from "../../../models/Product";
 import { mongooseConnect } from "../../../lib/mongoose";
-import { DeleteResult } from "mongoose";
+import { DeleteResult, Types } from "mongoose";
 import { IncomingForm } from "formidable";
 import logger from "../../../lib/logger";
 import ServerHelper from "../../../utils/serverHelper";
@@ -38,13 +38,9 @@ export default async function handler(
 
             if (typeof slug !== 'string') return res.status(400).json({ errors: 'Invalid slug format' });
 
-            const product: ProductDoc | null = await Product.findOne({ slug: slug });
+            const product: ProductDoc | null = await Product.findOne({ slug: slug }).populate('category');
 
-            if (!product) {
-                res.status(404).json({
-                    errors: 'Product is not found'
-                });
-            }
+            if (!product) res.status(404).json({ errors: 'Product is not found' });
 
             return res.status(200).json(product);
         } else if (method == 'PUT') {
@@ -61,6 +57,7 @@ export default async function handler(
             const description: string = fields.description?.[0]?.trim() || '';
             const price: number = fields.price?.[0] ? parseFloat(fields.price?.[0] as string) : NaN;
             const existingImages: string = fields.imageUrls?.[0];
+            const category: Types.ObjectId | null = fields.categoryId?.[0] ? new Types.ObjectId(fields.categoryId?.[0].trim()) : null;
 
             if (!name || !description || !slug || isNaN(price) || price <= 0) {
                 return res.status(400).json({ errors: 'All fields are required.' });
@@ -89,16 +86,13 @@ export default async function handler(
                         slug,
                         price,
                         imageUrls,
+                        category
                     }
                 },
                 { new: true }
             );
 
-            if (!productDoc) {
-                res.status(404).json({
-                    errors: 'Product is not found'
-                });
-            }
+            if (!productDoc) res.status(404).json({ errors: 'Product is not found' });
 
             return res.status(200).json(productDoc);
         } else if (method == 'DELETE') {
