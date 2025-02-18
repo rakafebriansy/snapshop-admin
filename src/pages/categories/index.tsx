@@ -23,7 +23,7 @@ const CategoriesPage: React.FC = ({ }) => {
             };
 
             if (editCategory && editCategory._id) {
-                category.parent = editCategory ? new Types.ObjectId(editCategory.parent._id) : undefined;
+                category.parent = parent ? new Types.ObjectId(parent) : undefined;
                 await update(category, editCategory._id);
             } else {
                 category.parent = parent ? new Types.ObjectId(parent) : undefined;
@@ -132,7 +132,7 @@ const CategoriesPage: React.FC = ({ }) => {
                     onChange={e => setName(e.target.value)}
                 />
                 <select value={parent} onChange={e => setParent(e.target.value)}>
-                    <option>No parent category</option>
+                    <option value=''>No parent category</option>
                     {categories && categories.length > 0 && categories.map(category => (
                         <option value={category._id.toString()}>{category.name}</option>
                     ))}
