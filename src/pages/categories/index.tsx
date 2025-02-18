@@ -20,12 +20,13 @@ const CategoriesPage: React.FC = ({ }) => {
         try {
             const category: CategoryRequestType = {
                 name,
-                parent: parent ? new Types.ObjectId(parent) : undefined
             };
-            
+
             if (editCategory && editCategory._id) {
+                category.parent = editCategory ? new Types.ObjectId(editCategory.parent._id) : undefined;
                 await update(category, editCategory._id);
             } else {
+                category.parent = parent ? new Types.ObjectId(parent) : undefined;
                 await store(category);
             }
 
@@ -34,7 +35,7 @@ const CategoriesPage: React.FC = ({ }) => {
             await getCategories();
         } catch (error) {
             const message = error instanceof AxiosError ? error.response?.data.errors : (error as Error).message;
-            logger.error(`/pages/categories/index@store: ${message}`);
+            logger.error(`/pages/categories/index@send: ${message}`);
             swalAlert({
                 isSuccess: false,
                 title: 'Something went wrong!',
@@ -44,21 +45,33 @@ const CategoriesPage: React.FC = ({ }) => {
     };
 
     const store = async (category: CategoryRequestType) => {
-        await CategoryService.store(category);
-        swalAlert({
-            isSuccess: true,
-            title: 'Success!',
-            text: 'Successfully add new category.'
-        });
+        try {
+            await CategoryService.store(category);
+            swalAlert({
+                isSuccess: true,
+                title: 'Success!',
+                text: 'Successfully add new category.'
+            });
+        } catch (error) {
+            const message = error instanceof AxiosError ? error.response?.data.errors : (error as Error).message;
+            logger.error(`/pages/categories/index@store: ${message}`);
+            throw error;
+        }
     }
 
     const update = async (category: CategoryRequestType, editCategoryId: Types.ObjectId) => {
-        await CategoryService.update(category, editCategoryId);
-        swalAlert({
-            isSuccess: true,
-            title: 'Success!',
-            text: 'Successfully update category.'
-        });
+        try {
+            await CategoryService.update(category, editCategoryId);
+            swalAlert({
+                isSuccess: true,
+                title: 'Success!',
+                text: 'Successfully update category.'
+            });
+        } catch (error) {
+            const message = error instanceof AxiosError ? error.response?.data.errors : (error as Error).message;
+            logger.error(`/pages/categories/index@update: ${message}`);
+            throw error;
+        }
     }
 
     const edit = (category?: CategoryDoc) => {

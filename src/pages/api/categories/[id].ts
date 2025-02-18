@@ -18,7 +18,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             const categoryDoc: CategoryDoc | null = await Category.findOneAndUpdate({ _id: id }, {
                 name,
-                parent
+                parent: parent ?? null
             }, { new: true });
 
             return res.status(201).json(categoryDoc);
