@@ -10,7 +10,7 @@ class ProductService {
             return response.data;
         } catch (error) {
             if (error instanceof AxiosError) {
-                logger.error(`/services/product/index: ${(error as Error)}`);
+                logger.error(`/services/product@index: ${(error as Error)}`);
             }
             throw error;
         }
@@ -22,7 +22,7 @@ class ProductService {
             return response.data;
         } catch (error) {
             if (error instanceof AxiosError) {
-                logger.error(`/services/product/show: ${(error as Error)}`);
+                logger.error(`/services/product@show: ${(error as Error)}`);
             }
             throw error;
         }
@@ -38,7 +38,7 @@ class ProductService {
             return response.data;
         } catch (error) {
             if (error instanceof AxiosError) {
-                logger.error(`/services/product/store: ${(error as Error)}`);
+                logger.error(`/services/product@store: ${(error as Error)}`);
             }
             throw error;
         }
@@ -54,7 +54,7 @@ class ProductService {
             return response.data;
         } catch (error) {
             if (error instanceof AxiosError) {
-                logger.error(`/services/product/update: ${(error as Error)}`);
+                logger.error(`/services/product@update: ${(error as Error)}`);
             }
             throw error;
         }
@@ -66,7 +66,7 @@ class ProductService {
             return response.data;
         } catch (error) {
             if (error instanceof AxiosError) {
-                logger.error(`/services/product/delete: ${(error as Error)}`);
+                logger.error(`/services/product@delete: ${(error as Error)}`);
             }
             throw error;
         }
