@@ -36,11 +36,7 @@ export default async function handler(
         if (method == 'GET') {
             const { slug }: ProductParamsType = req.query;
 
-            if (typeof slug !== 'string') {
-                res.status(400).json({
-                    errors: 'Invalid slug format'
-                });
-            }
+            if (typeof slug !== 'string') return res.status(400).json({ errors: 'Invalid slug format' });
 
             const product: ProductDoc | null = await Product.findOne({ slug: slug });
 
@@ -108,21 +104,13 @@ export default async function handler(
         } else if (method == 'DELETE') {
             const { slug }: ProductParamsType = req.query;
 
-            if (typeof slug !== 'string') {
-                res.status(400).json({
-                    errors: 'Invalid slug format'
-                });
-            }
+            if (typeof slug !== 'string') return res.status(400).json({ errors: 'Invalid slug format' });
 
-            const product: DeleteResult = await Product.deleteOne({ slug: slug });
+            const result: DeleteResult = await Product.deleteOne({ slug: slug });
 
-            if (!product) {
-                res.status(404).json({
-                    errors: 'Product is not found'
-                });
-            }
+            if (!result) res.status(404).json({ errors: 'Product is not found' });
 
-            return res.status(200).json(product);
+            return res.status(200).json(result);
         }
         return res.status(405).json({ errors: "Method Not Allowed" });
     } catch (error) {

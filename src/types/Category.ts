@@ -5,3 +5,7 @@ export type CategoryRequestType = {
     name: string;
     parent?: Types.ObjectId;
 }
+
+export type CategoryParamsType = {
+    id?: Types.ObjectId | Types.ObjectId[];
+}

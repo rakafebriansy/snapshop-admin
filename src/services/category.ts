@@ -31,9 +31,9 @@ class CategoryService {
             throw error;
         }
     } 
-    static async update(category: CategoryRequestType, editId: Types.ObjectId, isServer: boolean = false): Promise<CategoryDoc> {
+    static async update(category: CategoryRequestType, id: Types.ObjectId, isServer: boolean = false): Promise<CategoryDoc> {
         try {
-            const response: AxiosResponse<CategoryDoc> = await axios.put(`${isServer ? process.env.NEXT_PUBLIC_API_URL : ''}/api/categories/${editId}`, category, {
+            const response: AxiosResponse<CategoryDoc> = await axios.put(`${isServer ? process.env.NEXT_PUBLIC_API_URL : ''}/api/categories/${id}`, category, {
                 headers: {
                     "Content-Type": "application/json",
                 },
@@ -46,6 +46,17 @@ class CategoryService {
             throw error;
         }
     } 
+    static async delete(id: Types.ObjectId, isServer: boolean = false): Promise<CategoryDoc> {
+        try {
+            const response: AxiosResponse<CategoryDoc> = await axios.delete(`${isServer ? process.env.NEXT_PUBLIC_API_URL : ''}/api/categories/${id}`);
+            return response.data;
+        } catch (error) {
+            if (error instanceof AxiosError) {
+                logger.error(`/services/category@delete: ${(error as Error)}`);
+            }
+            throw error;
+        }
+    }
 }
 
 export default CategoryService;
