@@ -6,8 +6,9 @@ export type ProductRequestType = {
     name: string;
     description: string;
     price: number;
-    images?: FileList | null,
-    imageUrls?: string[]
+    categoryId?: string;
+    images?: FileList | null;
+    imageUrls?: string[];
 }
 
 export type ProductParamsType = {

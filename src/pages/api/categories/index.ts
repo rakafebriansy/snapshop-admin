@@ -2,7 +2,6 @@ import { NextApiRequest, NextApiResponse } from "next";
 import logger from "../../../lib/logger";
 import { mongooseConnect } from "../../../lib/mongoose";
 import { Category, CategoryDoc } from "../../../models/Category";
-import { Types } from "mongoose";
 import { CategoryRequestType } from "../../../types/Category";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -28,7 +27,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
         return res.status(405).json({ errors: "Method Not Allowed" });
     } catch (error) {
-        logger.error(`/pages/api/categories: ${(error as Error)}`);
+        logger.error(`/pages/api/categories/index: ${(error as Error)}`);
         return res.status(500).json({ errors: "Internal Server Error", error: (error as Error) });
     }
 }

@@ -1,8 +1,13 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Helper from '../../utils/helper';
 import Image from 'next/image';
 import { ReactSortable } from 'react-sortablejs';
 import { ProductRequestType } from '../../types/Product';
+import { CategoryDoc } from '../../models/Category';
+import CategoryService from '../../services/category';
+import { swalAlert } from '../../lib/swal';
+import logger from '../../lib/logger';
+import { AxiosError } from 'axios';
 
 export type ProductFormType = {
     product: ProductRequestType,
@@ -35,6 +40,8 @@ const ProductForm: React.FC<ProductFormType> = ({
         existingImages?.map((url, index) => ({ id: index, url })) || []
     );
     const [images, setImages] = useState<File[]>([]);
+    const [categories, setCategories] = useState<CategoryDoc[] | undefined>(undefined);
+    const [categoryId, setCategoryId] = useState<string>('');
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
@@ -60,6 +67,24 @@ const ProductForm: React.FC<ProductFormType> = ({
         setImages((prevImages) => prevImages.filter((_, index) => index !== indexToRemove));
     };
 
+    const getCategories = async (): Promise<void> => {
+        const categories: CategoryDoc[] = await CategoryService.index();
+        setCategories(categories);
+    };
+
+    useEffect(() => {
+        try {
+            getCategories();
+        } catch (error) {
+            const message = error instanceof AxiosError ? error.response?.data.errors : (error as Error).message;
+            logger.error(`/pages/categories/index@get: ${message}`);
+            swalAlert({
+                isSuccess: false,
+                title: 'Something went wrong!',
+                text: `${message}.`
+            });
+        }
+    }, [])
 
     return (
         <form className='long-form' onSubmit={(e) => callback(e, {
@@ -69,13 +94,14 @@ const ProductForm: React.FC<ProductFormType> = ({
             description,
             price,
             images,
+            categoryId,
             imageUrls: imageUrls.filter((imageUrl) => imageUrl.url.startsWith('/uploads')).map((imageUrl) => imageUrl.url)
         })}>
             <label htmlFor="name">
                 <span>Name</span>
                 <input
                     type='text'
-                    name='name'
+                    id='name'
                     placeholder='Enter product name...'
                     value={name}
                     onChange={
@@ -93,14 +119,24 @@ const ProductForm: React.FC<ProductFormType> = ({
                 <input
                     readOnly={true}
                     type='text'
-                    name='slug'
+                    id='slug'
                     placeholder='-'
                     value={slug}
                 />
             </label>
+            <label htmlFor="category">
+                <span>Category</span>
+                <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)} id="category">
+                    <option value="">Uncategorized</option>
+                    {categories && categories.length > 0 && categories.map((category, i) => (
+                        <option key={i} value={category._id.toString()}>{category.name}</option>
+                    ))}
+                </select>
+            </label>
             <label htmlFor="description">
                 <span>Description</span>
                 <textarea
+                    id='description'
                     placeholder='Enter product description...'
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
@@ -109,6 +145,7 @@ const ProductForm: React.FC<ProductFormType> = ({
             <label htmlFor="price">
                 <span>Price (in USD)</span>
                 <input
+                    id='price'
                     type="text"
                     placeholder='Enter product price...'
                     value={Helper.formatToUSD(price)}
@@ -145,7 +182,7 @@ const ProductForm: React.FC<ProductFormType> = ({
                     </label>
                 </div>
             </div>
-            <button className='button-primary mt-5' type='submit'>Save</button>
+            <button className='button-primary mt-5 w-fit' type='submit'>Save</button>
         </form>
     );
 }

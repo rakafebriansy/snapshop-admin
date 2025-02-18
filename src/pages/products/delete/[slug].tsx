@@ -11,13 +11,11 @@ const DeleteProductPage: React.FC = ({ }) => {
     const router = useRouter();
     const { slug } = router.query;
     const [product, setProduct] = useState<ProductDoc | undefined>(undefined);
-    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         if (slug) {
             const getProduct = async () => {
                 try {
-                    setIsLoading(true);
                     const product: ProductDoc = await ProductService.show(slug as string);
                     setProduct(product);
                 } catch (error) {
@@ -29,8 +27,6 @@ const DeleteProductPage: React.FC = ({ }) => {
                         title: 'Something went wrong!',
                         text: `${message}.`
                     });
-                } finally {
-                    setIsLoading(false);
                 }
             };
 
@@ -60,12 +56,6 @@ const DeleteProductPage: React.FC = ({ }) => {
             });
         }
     };
-
-    if (!isLoading) {
-        return <div className='w-full h-full flex justify-center items-center'>
-                <h1>Loading...</h1>
-            </div>;
-    }
 
     return (
         <Layout>

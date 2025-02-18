@@ -4,6 +4,7 @@ import { mongooseConnect } from "../../../lib/mongoose";
 import { IncomingForm } from "formidable";
 import ServerHelper from "../../../utils/serverHelper";
 import logger from "../../../lib/logger";
+import { Types } from "mongoose";
 
 export const config = {
     api: {
@@ -36,6 +37,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const description: string = fields.description?.[0]?.trim() || "";
             const slug: string = fields.slug?.[0]?.trim() || "";
             const price: number = fields.price?.[0] ? parseFloat(fields.price?.[0] as string) : NaN;
+            const category: Types.ObjectId | null = fields.categoryId?.[0]? new Types.ObjectId(fields.categoryId?.[0].trim()) : null;
 
             if (!name || !description || !slug || isNaN(price) || price <= 0) {
                 return res.status(400).json({ errors: "All fields are required." });
@@ -56,13 +58,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 slug,
                 price,
                 imageUrls,
+                category
             });
 
             return res.status(201).json(productDoc);
         }
         return res.status(405).json({ errors: "Method Not Allowed" });
     } catch (error) {
-        logger.error(`/pages/api/products: ${(error as Error)}`);
+        logger.error(`/pages/api/products/index: ${(error as Error)}`);
         return res.status(500).json({ errors: "Internal Server Error", error: (error as Error) });
     }
 }

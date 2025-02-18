@@ -16,7 +16,6 @@ const NewProductsPage: React.FC = ({ }) => {
         slug: '',
         description: '',
         price: 0,
-        imageUrls: []
     };
 
     const store = async (e: React.FormEvent<HTMLFormElement>, product: ProductRequestType): Promise<void> => {
@@ -34,7 +33,10 @@ const NewProductsPage: React.FC = ({ }) => {
             Array.from(product.images).forEach((file) => {
                 formData.append(`images`, file);
             });
-
+            if(product.categoryId) {
+                formData.append('categoryId',String(product.categoryId));
+            }
+            
             await ProductService.store(formData);
             push('/products');
             swalAlert({
