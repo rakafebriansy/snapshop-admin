@@ -11,7 +11,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
         if (req.method === "PUT") {
             const { id }: CategoryParamsType = req.query;
-            const { name, parent }: CategoryRequestType = req.body;
+            const { name, parent, properties }: CategoryRequestType = req.body;
 
             if (!(id instanceof Types.ObjectId)) return res.status(400).json({ errors: "Invalid ID Format" });
 
@@ -19,7 +19,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             const categoryDoc: CategoryDoc | null = await Category.findOneAndUpdate({ _id: id }, {
                 name,
-                parent: parent ?? null
+                parent: parent ?? null,
+                properties: properties ?? null,
             }, { new: true });
 
             return res.status(201).json(categoryDoc);

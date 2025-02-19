@@ -12,7 +12,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const categories: CategoryDoc[] = await Category.find().populate('parent');
             return res.status(200).json(categories);
         } else if (req.method === "POST") {
-            const { name, parent }: CategoryRequestType = req.body;
+            const { name, parent, properties }: CategoryRequestType = req.body;
 
             if (!name) {
                 return res.status(400).json({ errors: "Name field are required" });
@@ -20,7 +20,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             const categoryDoc: CategoryDoc = await Category.create({
                 name,
-                parent
+                parent,
+                properties
             });
 
             return res.status(201).json(categoryDoc);
