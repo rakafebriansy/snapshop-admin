@@ -8,7 +8,7 @@ export type CategoryRequestType = {
 }
 
 export type CategoryParamsType = {
-    id?: Types.ObjectId | Types.ObjectId[];
+    id?: string | string[];
 }
 
 export type CategoryPropertyRequestType = {

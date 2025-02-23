@@ -13,11 +13,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const { id }: CategoryParamsType = req.query;
             const { name, parent, properties }: CategoryRequestType = req.body;
 
-            if (!(id instanceof Types.ObjectId)) return res.status(400).json({ errors: "Invalid ID Format" });
+            const convertedId: Types.ObjectId = new Types.ObjectId((id as string));
+
+            if (!(convertedId instanceof Types.ObjectId)) return res.status(400).json({ errors: "Invalid ID Format" });
 
             if (!name) return res.status(400).json({ errors: "Name field are required" });
 
-            const categoryDoc: CategoryDoc | null = await Category.findOneAndUpdate({ _id: id }, {
+            const categoryDoc: CategoryDoc | null = await Category.findOneAndUpdate({ _id: convertedId }, {
                 name,
                 parent: parent ?? null,
                 properties: properties ?? null,
@@ -27,13 +29,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         } else if (req.method == 'DELETE') {
             const { id }: CategoryParamsType = req.query;
 
-            if (!Types.ObjectId.isValid(id as Types.ObjectId)) return res.status(400).json({ errors: "Invalid ID Format" });
+            const convertedId: Types.ObjectId = new Types.ObjectId((id as string));
+
+            if (!Types.ObjectId.isValid(convertedId)) return res.status(400).json({ errors: "Invalid ID Format" });
 
             const isParent = await Category.exists({ parent: id });
 
             if (isParent) return res.status(400).json({ errors: "Category is still used as parent by another category" });
 
-            const result: DeleteResult = await Category.deleteOne({ _id: id });
+            const result: DeleteResult = await Category.deleteOne({ _id: convertedId });
 
             if (!result.deletedCount) res.status(404).json({ errors: 'Category is not found' });
 

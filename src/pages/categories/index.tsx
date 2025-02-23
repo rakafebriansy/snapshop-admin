@@ -39,6 +39,7 @@ const CategoriesPage: React.FC = ({ }) => {
             setName('');
             setParent('');
             setProperties([]);
+            if(editCategory) setEditCategory(undefined);
             await getCategories();
         } catch (error) {
             const message = error instanceof AxiosError ? error.response?.data.errors : (error as Error).message;
@@ -92,10 +93,15 @@ const CategoriesPage: React.FC = ({ }) => {
             setEditCategory(newCategory);
             setName(category.name);
             setParent(category.parent ? String(category.parent._id) : '');
+            setProperties(category.properties ? category.properties.map(property => ({
+                name: property.name,
+                values: property.values.join(',')
+            })) : []);
         } else {
             setEditCategory(undefined);
             setName('');
             setParent('');
+            setProperties([]);
         }
     }
 
