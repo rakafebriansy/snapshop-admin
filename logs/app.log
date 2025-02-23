@@ -1,0 +1,4 @@
+{"level":50,"time":"23/02/2025, 19.21.20","pid":8680,"hostname":"raka","msg":"/pages/api/products/index: SyntaxError: \"undefined\" is not valid JSON"}
+{"level":50,"time":"23/02/2025, 19.23.15","pid":8680,"hostname":"raka","msg":"/pages/api/products/index: SyntaxError: \"undefined\" is not valid JSON"}
+{"level":50,"time":"23/02/2025, 19.23.39","pid":8680,"hostname":"raka","msg":"/pages/api/products/index: SyntaxError: \"undefined\" is not valid JSON"}
+{"level":50,"time":"23/02/2025, 19.23.51","pid":8680,"hostname":"raka","msg":"/pages/api/products/index: SyntaxError: \"undefined\" is not valid JSON"}

@@ -58,7 +58,7 @@ export default async function handler(
             const price: number = fields.price?.[0] ? parseFloat(fields.price?.[0] as string) : NaN;
             const existingImages: string = fields.imageUrls?.[0];
             const category: Types.ObjectId | null = fields.categoryId?.[0] ? new Types.ObjectId(fields.categoryId?.[0].trim()) : null;
-            const properties: ProductPropertyRequestType[] | null = fields.properties?.[0] ? JSON.parse(fields.properties?.[0]) : null;
+            const properties: ProductPropertyRequestType | null = fields.properties?.[0] ? JSON.parse(fields.properties?.[0]) : null;
 
             if (!name || !description || !slug || isNaN(price) || price <= 0) {
                 return res.status(400).json({ errors: 'All fields are required.' });

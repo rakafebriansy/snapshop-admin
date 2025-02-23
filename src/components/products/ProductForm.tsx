@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Helper from '../../utils/helper';
 import Image from 'next/image';
 import { ReactSortable } from 'react-sortablejs';
-import { ProductRequestType } from '../../types/Product';
+import { ProductPropertyRequestType, ProductRequestType } from '../../types/Product';
 import { CategoryDoc } from '../../models/Category';
 import CategoryService from '../../services/category';
 import { swalAlert } from '../../lib/swal';
@@ -30,7 +30,8 @@ const ProductForm: React.FC<ProductFormType> = ({
         description: existingDescription,
         price: existingPrice,
         imageUrls: existingImages,
-        categoryId: existingCategory
+        categoryId: existingCategory,
+        properties: existingProperties
     } = product;
 
     const [name, setName] = useState<string>(existingName || '');
@@ -43,7 +44,7 @@ const ProductForm: React.FC<ProductFormType> = ({
     const [images, setImages] = useState<File[]>([]);
     const [categories, setCategories] = useState<CategoryDoc[] | undefined>(undefined);
     const [categoryId, setCategoryId] = useState<string>(existingCategory || '');
-    const [properties, setProperties] = useState<Record<string,string>>({});
+    const [properties, setProperties] = useState<ProductPropertyRequestType>(existingProperties || {});
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
         const files = e.target.files;
@@ -70,11 +71,13 @@ const ProductForm: React.FC<ProductFormType> = ({
     };
 
     const handleChangeProperties = (propertyName: string, value: string): void => {
-        setProperties(prev => {
-            const newProperties = {...prev};
-            newProperties[propertyName] = value;
-            return newProperties;
-        });
+        if(properties) {
+            setProperties(prev => {
+                const newProperties: ProductPropertyRequestType = {...prev};
+                newProperties[propertyName] = value;
+                return newProperties;
+            });
+        }
     }
 
     const getCategories = async (): Promise<void> => {
@@ -162,10 +165,10 @@ const ProductForm: React.FC<ProductFormType> = ({
                     {propertiesToFill.length > 0 && propertiesToFill.map(property => (
                         <div className="flex justify-between">
                             <p>{property.name}</p>
-                            <select value={properties[property.name]} required className='max-w-52' onChange={(e) => handleChangeProperties(property.name, e.target.value)}>
+                            <select value={properties ? properties[property.name] : ''} required className='max-w-52' onChange={(e) => handleChangeProperties(property.name, e.target.value)}>
                                 <option value=''>No Property Selected</option>
                                 {property.values.map(value => (
-                                    <option value={value}>{value}</option>
+                                    <option selected={properties[property.name] == value} value={value}>{value}</option>
                                 ))}
                             </select>
                         </div>

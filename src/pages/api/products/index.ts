@@ -33,16 +33,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return res.status(200).json(products);
         } else if (req.method === "POST") {
             const { fields, files } = await parseForm(req);
-
+            
+            console.log(fields);
+            console.log(fields.properties);
             const name: string = fields.name?.[0]?.trim() || "";
             const description: string = fields.description?.[0]?.trim() || "";
             const slug: string = fields.slug?.[0]?.trim() || "";
             const price: number = fields.price?.[0] ? parseFloat(fields.price?.[0] as string) : NaN;
             const category: Types.ObjectId | null = fields.categoryId?.[0]? new Types.ObjectId(fields.categoryId?.[0].trim()) : null;
-            const properties: ProductPropertyRequestType[] | null = fields.properties?.[0] ? JSON.parse(fields.properties?.[0]) : null;
+            const properties: ProductPropertyRequestType | null = fields.properties?.[0] ? JSON.parse(fields.properties?.[0]) : null;
 
-            console.log(fields);
-            console.log(fields.properties);
             if (!name || !description || !slug || isNaN(price) || price <= 0) {
                 return res.status(400).json({ errors: "All fields are required." });
             }

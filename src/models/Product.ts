@@ -10,7 +10,7 @@ export interface ProductDoc extends Document {
     price: number;
     imageUrls: string[];
     category?: CategoryDoc;
-    properties?: ProductPropertyRequestType[];
+    properties?: ProductPropertyRequestType;
 }
 
 const ProductSchema: Schema = new Schema<ProductDoc>({
@@ -20,7 +20,7 @@ const ProductSchema: Schema = new Schema<ProductDoc>({
     price: { type: Number, required: true },
     imageUrls: [{ type: String, required: true }],
     category: { type: Types.ObjectId, ref: 'Category', required: false },
-    properties: [{ type: Object, required: false }],
+    properties: { type: Object, required: false },
 });
 
 export const Product: Model<ProductDoc> = models?.Product || model<ProductDoc>('Product', ProductSchema);

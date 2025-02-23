@@ -72,6 +72,7 @@ const EditProductPage: React.FC = ({ }) => {
                         price: productDoc.price,
                         categoryId: productDoc.category ? String((productDoc.category as CategoryDoc)._id) : undefined,
                         imageUrls: productDoc.imageUrls,
+                        properties: productDoc.properties
                     }
                     setProduct(productRequest);
                 } catch (error) {

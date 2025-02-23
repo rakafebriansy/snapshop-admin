@@ -9,12 +9,11 @@ export type ProductRequestType = {
     categoryId?: string;
     images?: FileList | null;
     imageUrls?: string[];
-    properties?: ProductPropertyRequestType[]
+    properties?: ProductPropertyRequestType
 }
 
 export type ProductPropertyRequestType = {
-    name: string;
-    values: string;
+    [key: string]: string;
 }
 
 export type ProductParamsType = {
