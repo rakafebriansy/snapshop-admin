@@ -5,7 +5,7 @@ import { DeleteResult, Types } from "mongoose";
 import { IncomingForm } from "formidable";
 import logger from "../../../lib/logger";
 import ServerHelper from "../../../utils/serverHelper";
-import { ProductParamsType } from "../../../types/Product";
+import { ProductParamsType, ProductPropertyRequestType } from "../../../types/Product";
 
 export const config = {
     api: {
@@ -58,6 +58,7 @@ export default async function handler(
             const price: number = fields.price?.[0] ? parseFloat(fields.price?.[0] as string) : NaN;
             const existingImages: string = fields.imageUrls?.[0];
             const category: Types.ObjectId | null = fields.categoryId?.[0] ? new Types.ObjectId(fields.categoryId?.[0].trim()) : null;
+            const properties: ProductPropertyRequestType[] | null = fields.properties?.[0] ? JSON.parse(fields.properties?.[0]) : null;
 
             if (!name || !description || !slug || isNaN(price) || price <= 0) {
                 return res.status(400).json({ errors: 'All fields are required.' });
@@ -86,7 +87,8 @@ export default async function handler(
                         slug,
                         price,
                         imageUrls,
-                        category
+                        category,
+                        properties
                     }
                 },
                 { new: true }

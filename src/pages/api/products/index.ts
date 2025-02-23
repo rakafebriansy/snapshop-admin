@@ -5,6 +5,7 @@ import { IncomingForm } from "formidable";
 import ServerHelper from "../../../utils/serverHelper";
 import logger from "../../../lib/logger";
 import { Types } from "mongoose";
+import { ProductPropertyRequestType } from "../../../types/Product";
 
 export const config = {
     api: {
@@ -38,7 +39,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const slug: string = fields.slug?.[0]?.trim() || "";
             const price: number = fields.price?.[0] ? parseFloat(fields.price?.[0] as string) : NaN;
             const category: Types.ObjectId | null = fields.categoryId?.[0]? new Types.ObjectId(fields.categoryId?.[0].trim()) : null;
+            const properties: ProductPropertyRequestType[] | null = fields.properties?.[0] ? JSON.parse(fields.properties?.[0]) : null;
 
+            console.log(fields);
+            console.log(fields.properties);
             if (!name || !description || !slug || isNaN(price) || price <= 0) {
                 return res.status(400).json({ errors: "All fields are required." });
             }
@@ -58,7 +62,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 slug,
                 price,
                 imageUrls,
-                category
+                category,
+                properties
             });
 
             return res.status(201).json(productDoc);

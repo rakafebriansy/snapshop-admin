@@ -38,6 +38,7 @@ const EditProductPage: React.FC = ({ }) => {
             }
             if(product.categoryId) {
                 formData.append('categoryId',String(product.categoryId));
+                formData.append('properties',(JSON.stringify(product.properties)))
             }
 
             await ProductService.update(slug as string, formData);

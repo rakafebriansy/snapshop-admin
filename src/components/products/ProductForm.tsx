@@ -43,8 +43,9 @@ const ProductForm: React.FC<ProductFormType> = ({
     const [images, setImages] = useState<File[]>([]);
     const [categories, setCategories] = useState<CategoryDoc[] | undefined>(undefined);
     const [categoryId, setCategoryId] = useState<string>(existingCategory || '');
+    const [properties, setProperties] = useState<Record<string,string>>({});
 
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
         const files = e.target.files;
         if (files) {
             const newFiles = Array.from(files);
@@ -63,10 +64,18 @@ const ProductForm: React.FC<ProductFormType> = ({
         }
     };
 
-    const handleRemoveFile = (indexToRemove: number) => {
+    const handleRemoveFile = (indexToRemove: number): void => {
         setImageUrls((prevUrls) => prevUrls.filter((_, index) => index !== indexToRemove));
         setImages((prevImages) => prevImages.filter((_, index) => index !== indexToRemove));
     };
+
+    const handleChangeProperties = (propertyName: string, value: string): void => {
+        setProperties(prev => {
+            const newProperties = {...prev};
+            newProperties[propertyName] = value;
+            return newProperties;
+        });
+    }
 
     const getCategories = async (): Promise<void> => {
         const categories: CategoryDoc[] = await CategoryService.index();
@@ -85,7 +94,22 @@ const ProductForm: React.FC<ProductFormType> = ({
                 text: `${message}.`
             });
         }
-    }, [])
+    }, []);
+
+    const propertiesToFill = [];
+    if (categories && categories.length > 0) {
+        let categoryInfo: CategoryDoc | undefined = categories.find(({ _id }) => String(_id) === categoryId);
+        if (categoryInfo?.properties) {
+            propertiesToFill.push(...categoryInfo.properties);
+        }
+        while (categoryInfo?.parent?._id) {
+            const parentCategoryInfo = categories.find(({ _id }) => _id === categoryInfo?.parent?._id);
+            if (parentCategoryInfo?.properties) {
+                propertiesToFill.push(...parentCategoryInfo?.properties);
+            }
+            categoryInfo = parentCategoryInfo;
+        }
+    }
 
     return (
         <form className='long-form' onSubmit={(e) => callback(e, {
@@ -96,7 +120,8 @@ const ProductForm: React.FC<ProductFormType> = ({
             price,
             images,
             categoryId,
-            imageUrls: imageUrls.filter((imageUrl) => imageUrl.url.startsWith('/uploads')).map((imageUrl) => imageUrl.url)
+            imageUrls: imageUrls.filter((imageUrl) => imageUrl.url.startsWith('/uploads')).map((imageUrl) => imageUrl.url),
+            properties
         })}>
             <label htmlFor="name">
                 <span>Name</span>
@@ -133,6 +158,19 @@ const ProductForm: React.FC<ProductFormType> = ({
                         <option key={i} value={category._id.toString()}>{category.name}</option>
                     ))}
                 </select>
+                <div className="flex flex-col gap-2 mt-2">
+                    {propertiesToFill.length > 0 && propertiesToFill.map(property => (
+                        <div className="flex justify-between">
+                            <p>{property.name}</p>
+                            <select value={properties[property.name]} required className='max-w-52' onChange={(e) => handleChangeProperties(property.name, e.target.value)}>
+                                <option value=''>No Property Selected</option>
+                                {property.values.map(value => (
+                                    <option value={value}>{value}</option>
+                                ))}
+                            </select>
+                        </div>
+                    ))}
+                </div>
             </label>
             <label htmlFor="description">
                 <span>Description</span>
