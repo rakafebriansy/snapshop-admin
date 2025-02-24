@@ -6,6 +6,7 @@ import { IncomingForm } from "formidable";
 import logger from "../../../lib/logger";
 import ServerHelper from "../../../utils/serverHelper";
 import { ProductParamsType, ProductPropertyRequestType } from "../../../types/Product";
+import { isAdminRequest } from "../auth/[...nextauth]";
 
 export const config = {
     api: {
@@ -32,6 +33,9 @@ export default async function handler(
 
         const { method } = req;
         await mongooseConnect();
+
+        await isAdminRequest(req, res);
+
 
         if (method == 'GET') {
             const { slug }: ProductParamsType = req.query;

@@ -3,9 +3,12 @@ import logger from "../../../lib/logger";
 import { mongooseConnect } from "../../../lib/mongoose";
 import { Category, CategoryDoc } from "../../../models/Category";
 import { CategoryRequestType } from "../../../types/Category";
+import { isAdminRequest } from "../auth/[...nextauth]";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     await mongooseConnect();
+
+    await isAdminRequest(req, res);
 
     try {
         if (req.method === 'GET') {

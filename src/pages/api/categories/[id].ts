@@ -4,9 +4,12 @@ import { mongooseConnect } from "../../../lib/mongoose";
 import { Category, CategoryDoc } from "../../../models/Category";
 import { CategoryParamsType, CategoryRequestType } from "../../../types/Category";
 import { DeleteResult, Types } from "mongoose";
+import { isAdminRequest } from "../auth/[...nextauth]";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     await mongooseConnect();
+
+    await isAdminRequest(req, res);
 
     try {
         if (req.method === "PUT") {
