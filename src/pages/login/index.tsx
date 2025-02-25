@@ -1,24 +1,10 @@
-import React, { useEffect } from 'react'
-import { signIn, useSession } from "next-auth/react"
+import React from 'react'
+import { signIn } from "next-auth/react"
 import logger from '../../lib/logger'
 import { swalAlert } from '../../lib/swal'
 import { AxiosError } from 'axios'
-import { useRouter } from 'next/router'
-import Cookies from 'js-cookie' 
 
 const LoginPage: React.FC = ({ }) => {
-
-    const { data: session, status } = useSession();
-    const { push } = useRouter();
-
-    useEffect(() => {
-        if (status === "authenticated" && session?.user) {
-            Cookies.set('auth-token', session.user.email, { expires: 1, path: '/' });
-            push('/');
-        }
-    }, [session, status, push]);
-
-
     const login = async (): Promise<void> => {
         try {
             await signIn('google');
