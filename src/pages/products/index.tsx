@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Layout from '../../components/Layout';
 import Link from 'next/link';
 import ProductService from '../../services/product';
@@ -7,42 +7,40 @@ import { swalAlert } from '../../lib/swal';
 import logger from '../../lib/logger';
 import { AxiosError } from 'axios';
 
-export async function getServerSideProps() {
-    try {
-        const data: ProductDoc[] = await ProductService.index(true);
-        return {
-            props: {
-                products: data
+
+const ProductsPage: React.FC = () => {
+
+    const [products, setProducts] = useState<ProductDoc[]>([]);
+
+    useEffect(() => {
+        async function getProducts() {
+            try {
+                const data: ProductDoc[] = await ProductService.index(true);
+                setProducts(data);
+            } catch (error) {
+                swalAlert({
+                    isSuccess: false,
+                    title: 'Something went wrong!',
+                    text: `${(error as Error).message}.`
+                });
+                const message = error instanceof AxiosError ? error.response?.data.errors : (error as Error).message;
+                logger.error(`/pages/products/index@get: ${message}`);
+                swalAlert({
+                    isSuccess: false,
+                    title: 'Something went wrong!',
+                    text: `${message}.`
+                });
+                return {
+                    props: {
+                        products: [],
+                        error: (error as Error).message
+                    }
+                };
             }
         }
-    } catch (error) {
-        swalAlert({
-            isSuccess: false,
-            title: 'Something went wrong!',
-            text: `${(error as Error).message}.`
-        });
-        const message = error instanceof AxiosError ? error.response?.data.errors : (error as Error).message;
-        logger.error(`/pages/products/index@get: ${message}`);
-        swalAlert({
-            isSuccess: false,
-            title: 'Something went wrong!',
-            text: `${message}.`
-        });
-        return {
-            props: {
-                products: [],
-                error: (error as Error).message
-            }
-        };
-    }
-}
 
-export type ProductsPageProps = {
-    products: (ProductDoc & Document)[]
-}
-
-const ProductsPage: React.FC<ProductsPageProps> = ({ products }: ProductsPageProps) => {
-
+        getProducts();
+    }, []);
     return (
         <Layout>
             <Link href='/products/new' className='button-primary'>&#43; Add new product</Link>
