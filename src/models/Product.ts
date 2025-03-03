@@ -21,6 +21,8 @@ const ProductSchema: Schema = new Schema<ProductDoc>({
     imageUrls: [{ type: String, required: true }],
     category: { type: Types.ObjectId, ref: 'Category', required: false },
     properties: { type: Object, required: false },
+},{
+    timestamps: true
 });
 
 export const Product: Model<ProductDoc> = models?.Product || model<ProductDoc>('Product', ProductSchema);
