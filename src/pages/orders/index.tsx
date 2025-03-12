@@ -22,6 +22,7 @@ const OrdersPage: React.FC = ({ }) => {
                 <thead>
                     <tr>
                         <th>Date</th>
+                        <th>Paid</th>
                         <th>Recipient</th>
                         <th>Products</th>
                     </tr>
@@ -30,6 +31,7 @@ const OrdersPage: React.FC = ({ }) => {
                     {orders.length > 0 && orders.map(order => (
                         <tr>
                             <td>{new Date(order.createdAt).toLocaleString()}</td>
+                            <td className={`font-semibold ${order.paid ? 'text-green-500' : 'text-red-500'}`}>{order.paid ? 'YES' : 'NO'}</td>
                             <td>
                                 {order.name} {order.email}<br />
                                 {order.streetAddress} {order.city} {order.postalCode}<br />
